@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 3 * * *'      # nightly safety run
+
+env:
+  HA_VERSION: "2025.5.0"     # must match the pin in conftest.py
+
+jobs:
+  lint-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.12"]     # HA moved to 3.12 in 2025.2
+
+    steps:
+    - uses: actions/checkout@v4
+
+    # ── Linters (optional but nice) ─────────────────────────────
+    - uses: pre-commit/[email protected]
+      with:
+        extra_args: --all-files
+
+    # ── Hassfest (validates manifest, translations) ────────────
+    - name: hassfest
+      uses: home-assistant/actions/[email protected]
+
+    # ── Install + run tests ─────────────────────────────────────
+    - uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python }}
+
+    - name: Install dependencies
+      run: |
+        pip install -U pip
+        pip install ".[test]" "homeassistant==$HA_VERSION"
+
+    - name: Run pytest with coverage
+      run: |
+        pytest -q \
+          --cov=kronoterm_voice_actions \
+          --cov-report=xml \
+          --cov-fail-under=85

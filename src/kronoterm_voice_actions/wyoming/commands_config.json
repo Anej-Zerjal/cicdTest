@@ -1,0 +1,81 @@
+{
+  "commands": [
+    {
+      "template": "Kakšna je zunanja temperatura", 
+      "action": "get_outside_temperature"
+    },
+    {
+      "template": "Kakšna je sobna temperatura",
+      "action": "get_room_temp"
+    },
+    {
+      "template": "Kakšna je temperatura rezervoarja",
+      "action": "get_reservoir_temp"
+    },
+    {
+      "template": "Kakšna je temperatura sanitarne vode",
+      "action": "get_sanitary_water_temp"
+    },
+    {
+      "template": "Kakšna je izhodna temperatura toplotne črpalke",
+      "action": "get_outlet_temp"
+    },
+    {
+      "template": "Kakšna je delovna funkcija toplotne črpalke",
+      "action": "get_working_function"
+    },
+    {
+      "template": "Kakšen je način delovanja toplotne črpalke",
+      "action": "get_heat_pump_operating_mode"
+    },
+    {
+      "template": "Kakšna je ciljna temperatura ogrevalnega kroga ena",
+      "action": "get_heating_loop1_target_temperature"
+    },
+    {
+      "template": "Kakšna je ciljna temperatura ogrevalnega kroga dva",
+      "action": "get_heating_loop2_target_temperature"
+    },
+    {
+      "template": "Kakšen je način ogrevalnega kroga ena",
+      "action": "get_heating_loop1_mode"
+    },
+    {
+      "template": "Kakšen je način ogrevalnega kroga dva",
+      "action": "get_heating_loop2_mode"
+    },
+    {
+      "template": "Kakšno je trenutno stanje ogrevalnega kroga ena",
+      "action": "get_heating_loop1_status"
+    },
+    {
+      "template": "Kakšno je trenutno stanje ogrevalnega kroga dva",
+      "action": "get_heating_loop2_status"
+    },
+    {
+      "template": "Prikaži aktivne alarme",
+      "action": "get_alarms_data_only"
+    },
+    {
+      "template": "Prikaži porabo energije",
+      "action": "get_theoretical_power_consumption"
+    },
+    {
+      "template": "Nastavi temperaturo ogrevalnega kroga ena na <temperature> stopinj",
+      "action": "set_heating_loop_1_temp"
+    },
+    {
+      "template": "Nastavi temperaturo ogrevalnega kroga dva na <temperature> stopinj",
+      "action": "set_heating_loop_2_temp"
+    },
+    {
+      "template": "test",
+      "action": "get_outside_temperature_mqtt"
+    },
+    {
+      "template": "drugi test",
+      "action": "set_loop_1_temp"
+    }
+  ]
+}
+
