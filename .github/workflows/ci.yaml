@@ -50,52 +50,59 @@ jobs:
 
             - name: Run integration tests on HAOS
               run: |
-                  ssh haos << EOF
-                        echo "--- Running tests on HAOS ---"
-                        cd ${{ env.HAOS_PROJECT_WORKSPACE }}
+                  ssh haos << 'EOF'
+                    set -e # Exit immediately if a command exits with a non-zero status
 
-                        echo "Current directory on HAOS after cd: $(pwd)"
-                        echo "Listing contents of HAOS workspace (pyproject.toml should be here):"
-                        ls -la
-                        
-                        echo "Checking specifically for pyproject.toml..."
-                        if [ -f "pyproject.toml" ]; then
-                            echo "pyproject.toml FOUND in $(pwd)"
-                        else
-                            echo "ERROR: pyproject.toml NOT FOUND in $(pwd)"
-                            echo "Contents of pyproject.toml if found (for sanity check):"
-                            cat pyproject.toml || echo "cat pyproject.toml failed."
-                            # If not found, the rsync command is the prime suspect,
-                            # or the path it's rsyncing from on the runner is incorrect.
-                        fi
+                    echo "--- Running tests on HAOS ---"
+                    # Use the environment variable defined in the GitHub Actions workflow
+                    # shellcheck disable=SC2154 # HAOS_PROJECT_WORKSPACE is set by GitHub Actions env
+                    cd "${HAOS_PROJECT_WORKSPACE}"
 
-                        echo "Running Docker container..."
-                        # Ensure $(pwd) correctly expands to the absolute path of HAOS_PROJECT_WORKSPACE
-                        docker run --rm -v "${{ env.HAOS_PROJECT_WORKSPACE }}":/work -w /work python:3.13-slim bash -c "
-                          echo '--- Inside Docker Container ---'
-                          echo 'Current directory inside Docker: \${{ env.HAOS_PROJECT_WORKSPACE }}'
-                          echo 'Listing contents of /work (where pyproject.toml should be):'
-                          ls -la /work/
+                    echo "Current directory on HAOS after cd: $(pwd)"
+                    echo "Listing contents of HAOS workspace ($(pwd)):"
+                    ls -la .
+                    
+                    echo "Checking specifically for pyproject.toml in $(pwd)..."
+                    if [ -f "pyproject.toml" ]; then
+                        echo "pyproject.toml FOUND in $(pwd)"
+                    else
+                        echo "ERROR: pyproject.toml NOT FOUND in $(pwd)"
+                        exit 1
+                    fi
+
+                    echo "Running Docker container for tests..."
+                    # $(pwd) will resolve to the absolute path of HAOS_PROJECT_WORKSPACE on the HAOS machine
+                    # The bash -c script is now a single-quoted string with commands separated by semicolons.
+                    docker run --rm \
+                        -v "$(pwd)":/work \
+                        -w /work \
+                        python:3.13-slim \
+                        bash -c '
+                          set -e;
+                          echo "--- Inside Docker Container ---";
+                          echo "Current directory inside Docker: $(pwd)";
+                          echo "Listing contents of /work (project root):";
+                          ls -la /work/;
                           
-                          echo 'Checking for /work/pyproject.toml specifically...'
+                          echo "Checking for /work/pyproject.toml specifically...";
                           if [ -f "/work/pyproject.toml" ]; then
-                              echo "pyproject.toml FOUND in /work"
+                              echo "pyproject.toml FOUND in /work";
                           else
-                              echo "ERROR: pyproject.toml NOT FOUND in /work"
-                              exit 1 # Exit script if critical file is missing
-                          fi
+                              echo "ERROR: pyproject.toml NOT FOUND in /work";
+                              exit 1;
+                          fi;
                           
-                          echo 'Upgrading pip...'
-                          pip install --upgrade pip
-                          echo 'Attempting pip install -e .[test]...'
-                          pip install -e .[test]
+                          echo "Upgrading pip...";
+                          python -m pip install --upgrade pip;
+                          echo "Attempting pip install -e .[test] from /work...";
+                          pip install -e .[test];
                           
-                          echo 'Running pytest...'
-                          pytest -v src/kronoterm_voice_actions/test_local/
-                          echo '--- Exiting Docker Container ---'
-                        "
+                          echo "Running pytest...";
+                          pytest -v src/kronoterm_voice_actions/test_local/;
+                          echo "--- Exiting Docker Container ---"
+                        '
 
-                        echo "--- Finished tests ---"
+                    echo "--- Finished tests on HAOS ---"
                   EOF
 
     # ──────────────────────── deploy ─────────────────────────
