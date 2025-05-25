@@ -2,7 +2,7 @@ import asyncio
 import logging
 import pymodbus.client
 from .const import MODBUS_SLAVE_ID
-from .kronoterm_models import RegisterAddress, KronotermAction
+from .kronoterm_models import RegisterAddress
 
 
 log = logging.getLogger(__name__)
@@ -47,14 +47,18 @@ class MqttClient:
         port = "/dev/ttyUSB" + str(usb_port)
         self.modbus_client = pymodbus.client.ModbusSerialClient(port, baudrate=115200)
 
-    async def invoke_kronoterm_action(self, action: KronotermAction):
+    async def invoke_kronoterm_action(self, action: str, parameter: float | None):
         """Invokes an action on the Kronoterm heat pump."""
-        handler = self.map_template_to_function.get(action.action)
+        handler = self.map_template_to_function.get(action)
         if handler is None:
-            raise ValueError(f"Action '{action.action}' not supported")
+            raise ValueError(f"Action '{action}' not supported")
+
+        if parameter is None:
+            # noinspection PyArgumentList
+            return await handler(self)
 
         # noinspection PyArgumentList
-        return await handler(self, **action.parameters)
+        return await handler(self, parameter)
 
 
     async def read(self, addr: RegisterAddress, desc: str = "") -> int:
@@ -240,11 +244,11 @@ class MqttClient:
         actual = await self.set_temperature(RegisterAddress.DHW_TARGET_TEMP, temperature)
         warning = ""
         if actual < temperature:
-            warning = ("Izbrana temperatura je previsoka. Najvišja podprta "
-                       f"temperatura za sanitarno vodo je {deg_imenovalnik(actual)}.")
+            warning = (f"Izbrana temperatura {deg_imenovalnik(temperature)} je previsoka. Najvišja "
+                       f"podprta temperatura za sanitarno vodo je {deg_imenovalnik(actual)}.")
         elif actual > temperature:
-            warning = ("Izbrana temperatura je prenizka. Najnižja podprta "
-                       f"temperatura za sanitarno vodo je {deg_imenovalnik(actual)}.")
+            warning = (f"Izbrana temperatura {deg_imenovalnik(temperature)} je prenizka. Najnižja "
+                       f"podprta temperatura za sanitarno vodo je {deg_imenovalnik(actual)}.")
 
         return f"{warning} Želena temperatura sanitarne vode nastavljena na {deg_tozilnik(actual)}."
 
@@ -300,11 +304,11 @@ class MqttClient:
         actual = await self.set_temperature(RegisterAddress.LOOP_1_TARGET_ROOM_TEMP, temperature)
         warning = ""
         if actual < temperature:
-            warning = ("Izbrana temperatura je previsoka. Najvišja podprta "
-                       f"temperatura za prostor prvega kroga je {deg_imenovalnik(actual)}.")
+            warning = (f"Izbrana temperatura {deg_imenovalnik(temperature)} je previsoka. Najvišja "
+                       f"podprta temperatura za prostor prvega kroga je {deg_imenovalnik(actual)}.")
         elif actual > temperature:
-            warning = ("Izbrana temperatura je prenizka. Najnižja podprta "
-                       f"temperatura za prostor prvega kroga je {deg_imenovalnik(actual)}.")
+            warning = (f"Izbrana temperatura {deg_imenovalnik(temperature)} je prenizka. Najnižja "
+                       f"podprta temperatura za prostor prvega kroga je {deg_imenovalnik(actual)}.")
 
         return f"{warning} Želena temperatura prostora prvega kroga nastavljena na {deg_tozilnik(actual)}."
 
@@ -357,11 +361,11 @@ class MqttClient:
         actual = await self.set_temperature(RegisterAddress.LOOP_2_TARGET_ROOM_TEMP, temperature)
         warning = ""
         if actual < temperature:
-            warning = ("Izbrana temperatura je previsoka. Najvišja podprta "
-                       f"temperatura za prostor drugega kroga je {deg_imenovalnik(actual)}.")
+            warning = (f"Izbrana temperatura {deg_imenovalnik(temperature)} je previsoka. Najvišja "
+                       f"podprta temperatura za prostor drugega kroga je {deg_imenovalnik(actual)}.")
         elif actual > temperature:
-            warning = ("Izbrana temperatura je prenizka. Najnižja podprta "
-                       f"temperatura za prostor drugega kroga je {deg_imenovalnik(actual)}.")
+            warning = (f"Izbrana temperatura {deg_imenovalnik(temperature)} je prenizka. Najnižja "
+                       f"podprta temperatura za prostor drugega kroga je {deg_imenovalnik(actual)}.")
 
         return f"{warning} Želena temperatura prostora drugega kroga nastavljena na {deg_tozilnik(actual)}."
 
@@ -414,11 +418,11 @@ class MqttClient:
         actual = await self.set_temperature(RegisterAddress.LOOP_3_ROOM_TARGET_TEMP, temperature)
         warning = ""
         if actual < temperature:
-            warning = ("Izbrana temperatura je previsoka. Najvišja podprta "
-                       f"temperatura za prostor tretjega kroga je {deg_imenovalnik(actual)}.")
+            warning = (f"Izbrana temperatura {deg_imenovalnik(temperature)} je previsoka. Najvišja "
+                       f"podprta temperatura za prostor tretjega kroga je {deg_imenovalnik(actual)}.")
         elif actual > temperature:
-            warning = ("Izbrana temperatura je prenizka. Najnižja podprta "
-                       f"temperatura za prostor tretjega kroga je {deg_imenovalnik(actual)}.")
+            warning = (f"Izbrana temperatura {deg_imenovalnik(temperature)} je prenizka. Najnižja "
+                       f"podprta temperatura za prostor tretjega kroga je {deg_imenovalnik(actual)}.")
 
         return f"{warning} Želena temperatura prostora tretjega kroga nastavljena na {deg_tozilnik(actual)}."
 
@@ -471,11 +475,11 @@ class MqttClient:
         actual = await self.set_temperature(RegisterAddress.LOOP_4_ROOM_TARGET_TEMP, temperature)
         warning = ""
         if actual < temperature:
-            warning = ("Izbrana temperatura je previsoka. Najvišja podprta "
-                       f"temperatura za prostor četrtega kroga je {deg_imenovalnik(actual)}.")
+            warning = (f"Izbrana temperatura {deg_imenovalnik(temperature)} je previsoka. Najvišja "
+                       f"podprta temperatura za prostor četrtega kroga je {deg_imenovalnik(actual)}.")
         elif actual > temperature:
-            warning = ("Izbrana temperatura je prenizka. Najnižja podprta "
-                       f"temperatura za prostor četrtega kroga je {deg_imenovalnik(actual)}.")
+            warning = (f"Izbrana temperatura {deg_imenovalnik(temperature)} je prenizka. Najnižja "
+                       f"podprta temperatura za prostor četrtega kroga je {deg_imenovalnik(actual)}.")
 
         return f"{warning} Želena temperatura prostora četrtega kroga nastavljena na {deg_tozilnik(actual)}."
 
