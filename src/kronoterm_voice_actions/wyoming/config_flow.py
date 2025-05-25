@@ -119,10 +119,12 @@ class WyomingConfigFlow(ConfigFlow, domain=DOMAIN):
             return await self.async_step_remote_service()
 
         if self._entry_type == ENTRY_TYPE_CUSTOM:
-            await self.async_set_unique_id(CUSTOM_AGENT_UNIQUE_ID)
-            self._abort_if_unique_id_configured()
-            return await self.async_step_custom_agent_auth()
-            # return self.async_abort(reason="unknown_entry_type")
+            return self.async_create_entry(
+                title="Kronoterm Conversation Agent",
+                data={
+                    CONF_TYPE: ENTRY_TYPE_CUSTOM,
+                },
+            )
 
         return self.async_abort(reason="unknown_entry_type")
 
