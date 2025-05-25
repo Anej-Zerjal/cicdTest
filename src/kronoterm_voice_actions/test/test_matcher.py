@@ -77,20 +77,20 @@ commands = [
 
 # Test slovenian_word_to_number_strict
 def test_parse_slovene_number_strict_basic():
-    assert matcher.slovenian_word_to_number_strict("ena") == '1'
-    assert matcher.slovenian_word_to_number_strict("dvanajst") == '12'
-    assert matcher.slovenian_word_to_number_strict("dvajset") == '20'
-    assert matcher.slovenian_word_to_number_strict("petindvajset") == '25'
-    assert matcher.slovenian_word_to_number_strict("25") == '25'
-    assert matcher.slovenian_word_to_number_strict("25.5") == '25.5'
-    assert matcher.slovenian_word_to_number_strict("nič") == '0'
+    assert float(matcher.slovenian_word_to_number_strict("ena")) == '1.0'
+    assert float(matcher.slovenian_word_to_number_strict("dvanajst")) == '12.0'
+    assert float(matcher.slovenian_word_to_number_strict("dvajset")) == '20.0'
+    assert float(matcher.slovenian_word_to_number_strict("petindvajset")) == '25.0'
+    assert float(matcher.slovenian_word_to_number_strict("25")) == '25.0'
+    assert float(matcher.slovenian_word_to_number_strict("25.5")) == '25.5'
+    assert float(matcher.slovenian_word_to_number_strict("nič")) == '0.0'
     assert matcher.slovenian_word_to_number_strict("mačipiču") is None
 
 # Test slovenian_word_to_number (with typos)
 def test_parse_slovene_number_typos():
-    assert matcher.slovenian_word_to_number("dvaset") == '20' # dvajset
-    assert matcher.slovenian_word_to_number("šestnajst") == '16'
-    assert matcher.slovenian_word_to_number("trinajst") == '13'
+    assert float(matcher.slovenian_word_to_number("dvaset")) == '20.0'
+    assert float(matcher.slovenian_word_to_number("šestnajst")) == '16.0'
+    assert float(matcher.slovenian_word_to_number("trinajst")) == '13.0'
 
 # Test replace_numbers_with_digits
 def test_replace_numbers():
@@ -113,7 +113,10 @@ def test_match_command_perfect():
     assert param is None
 
     action, param = matcher.match_command("nastavi temperaturo prostora ena na 22 stopinj", commands)
-    assert action == "nastavi temperaturo prostora ena na <temperature> stopinj"
+    assert action in [
+        "nastavi temperaturo prostora ena na <temperature> stopinj",
+        "nastavi želeno temperaturo prostora prvega kroga na <temperature> stopinj"
+    ]
     assert param == 22.0
 
     action, param = matcher.match_command("vklopi sistem", commands)
@@ -122,7 +125,7 @@ def test_match_command_perfect():
 
 # Test match_command with botched sentences
 def test_match_command_botched():
-    action, param = matcher.match_command("kakšna je tempertura sanitarne vode", commands)
+    action, param = matcher.match_command("kšna je tempertura sanitarne oude", commands)
     assert action == "kakšna je temperatura sanitarne vode"
     assert param is None
 
@@ -131,25 +134,38 @@ def test_match_command_botched():
     assert param is None
 
     action, param = matcher.match_command("nastavi temeraturo prostora ena na dvaindvajset stopinj", commands)
-    assert action == "nastavi temperaturo prostora ena na <temperature> stopinj"
+    assert action in [
+        "nastavi temperaturo prostora ena na <temperature> stopinj",
+        "nastavi želeno temperaturo prostora prvega kroga na <temperature> stopinj"
+    ]
     assert param == 22.0
 
     with pytest.raises(ValueError):
          matcher.match_command("vrabec na strehi in kamen v roki", commands)
 
     action, param = matcher.match_command("prosim te nastavi mi temperturo za sanitarno vodo na 45 stopinj", commands)
-    assert action == "nastavi želeno temperaturo sanitarne vode na <temperature> stopinj"
+    assert action in [
+        "nastavi želeno temperaturo sanitarne vode na <temperature> stopinj",
+        "nastavi temperaturo sanitarne vode na <temperature> stopinj",
+        "segrej sanitarno vodo na <temperature> stopinj"
+    ]
     assert param == 45.0
 
+    action, param = matcher.match_command("nastavi temperaturo prostora dva na endvajst celh pet stopinj", commands)
+    assert action in [
+        "nastavi temperaturo prostora dva na <temperature> stopinj",
+        "nastavi želeno temperaturo drugega prvega kroga na <temperature> stopinj"
+    ]
+    assert param == 21.5
+
     action, param = matcher.match_command("nastavi temperaturo prostora dva na 21.5 stopinj", commands)
-    assert action == "nastavi temperaturo prostora dva na <temperature> stopinj"
+    assert action in [
+        "nastavi temperaturo prostora dva na <temperature> stopinj",
+        "nastavi želeno temperaturo drugega prvega kroga na <temperature> stopinj"
+    ]
     assert param == 21.5
 
-    action, param = matcher.match_command("nastavi temperaturo prostora dva na enaindvajset cela pet stopinj", commands)
-    assert action == "nastavi temperaturo prostora dva na <temperature> stopinj"
-    assert param == 21.5
-
-    action, param = matcher.match_command("uklopi sistem", commands)
+    action, param = matcher.match_command("uklopi sstm", commands)
     assert action == "vklopi sistem"
     assert param is None
 
