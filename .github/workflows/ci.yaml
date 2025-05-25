@@ -46,7 +46,7 @@ jobs:
       - name: Sync integration to HAOS
         run: |
           rsync -az src/kronoterm_voice_actions/ \
-                haos:/config/custom_components/kronoterm_voice_actions/
+                haos:/config/custom_components/
 
       - name: Restart Home Assistant
         run: |
