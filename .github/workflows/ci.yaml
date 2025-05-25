@@ -59,7 +59,7 @@ jobs:
 
                       # 3) run docker, tee‐ing both stdout and stderr into /tmp/ci.log
                       docker run --rm \
-                          -v "$(pwd)":/work \
+                          -v "${{ env.HAOS_PROJECT_WORKSPACE }}":/work \
                           -w /work \
                           python:3.13-slim \
                           bash -eux -c '
