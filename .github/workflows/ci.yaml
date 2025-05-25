@@ -64,7 +64,7 @@ jobs:
                           python:3.13-slim \
                           bash -eux -c '
                           pip install --upgrade pip
-                          pip install -e ".[test]" "homeassistant==${HA_VERSION}"
+                          pip install -e ".[test]" "homeassistant==2025.5.3"
                           pytest -v src/kronoterm_voice_actions/test_local/
                           ' 2>&1 | tee /tmp/ci.log
 
