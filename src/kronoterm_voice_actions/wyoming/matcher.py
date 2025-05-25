@@ -44,9 +44,13 @@ floating_point_words = {
 
 digit_to_text = {
     "1": "ena",
+    "1.0": "ena",
     "2": "dva",
+    "2.0": "dva",
     "3": "tri",
+    "3.0": "tri",
     "4": "štiri",
+    "4.0": "štiri",
 }
 
 
@@ -244,7 +248,7 @@ def insert_numbers_back(text: str) -> str:
     words = text.split()
     for i in range(len(words)):
         word = words[i]
-        if word == "1" or word == "2" or word == "3" or word == "4":
+        if word in digit_to_text.keys():
             words[i] = digit_to_text[word]
 
     return ' '.join(words)
