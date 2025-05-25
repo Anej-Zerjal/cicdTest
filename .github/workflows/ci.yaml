@@ -45,7 +45,7 @@ jobs:
 
             - name: Run integration tests
               run: |
-                  ssh haos "cd config/ && python3 custom_components/runner.py"
+                  ssh haos "cd config/ && pwd && pytest -v"
 
     # ──────────────────────── deploy ─────────────────────────
     deploy:
