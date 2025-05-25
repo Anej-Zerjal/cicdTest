@@ -51,6 +51,7 @@ jobs:
             - name: Run integration tests on HAOS
               run: |
                   ssh haos << 'EOF'
+                  login
                     cd ${{ env.HAOS_PROJECT_WORKSPACE }}
                     pwd
                     pytest -v src/kronoterm_voice_actions/test/
