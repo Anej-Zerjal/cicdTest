@@ -50,7 +50,7 @@ jobs:
 
             - name: Run integration tests on HAOS
               run: |
-                  ssh haos << EOF
+                  ssh haos << 'EOF'
                         echo "--- Running tests on HAOS ---"
                         cd ${{ env.HAOS_PROJECT_WORKSPACE }}
 
@@ -71,9 +71,10 @@ jobs:
 
                         echo "Running Docker container..."
                         # Ensure $(pwd) correctly expands to the absolute path of HAOS_PROJECT_WORKSPACE
-                        docker run --rm -v "$(pwd)":/work -w /work python:3.13-slim bash -c "
+                        docker run --rm -v "${{ env.HAOS_PROJECT_WORKSPACE }}":/work -w /work python:3.13-slim bash -c "
                           echo '--- Inside Docker Container ---'
                           echo 'Current directory inside Docker: \$(pwd)'
+                          pwd
                           echo 'Listing contents of /work (where pyproject.toml should be):'
                           ls -la /work/
                           
