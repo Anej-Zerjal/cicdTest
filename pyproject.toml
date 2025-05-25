@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name            = "kronoterm_voice_actions"
-version         = "0.0.0"
+version         = "0.1.0"
 description     = "Home Assistant custom integration for Kronoterm voice actions"
 readme          = "README.md"
 requires-python = ">=3.13"
@@ -17,6 +17,12 @@ dependencies    = [
 
 [tool.setuptools]
 package-dir = {"" = "src"}
+packages = [
+    "kronoterm_voice_actions",
+    "kronoterm_voice_actions.wyoming",
+    "kronoterm_voice_actions.test",
+    "kronoterm_voice_actions.test_local",
+]
 
 [project.optional-dependencies]
 dev  = ["ruff", "black", "pre-commit"]
