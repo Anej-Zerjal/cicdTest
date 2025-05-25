@@ -43,6 +43,10 @@ jobs:
                   rsync -az src/kronoterm_voice_actions/ \
                         haos:/config/custom_components/
 
+            - name: Install Dependencies
+              run: |
+                  ssh haos "pip install pytest"
+
             - name: Run integration tests
               run: |
                   ssh haos "cd /config/custom_components/test && pytest -v"
@@ -51,7 +55,7 @@ jobs:
     deploy:
         if: github.ref == 'refs/heads/main'
         runs-on: [self-hosted, Linux, ARM]
-        needs: target_machine_tests
+        needs: matcher_unit_tests
 
         steps:
             - uses: actions/checkout@v4
