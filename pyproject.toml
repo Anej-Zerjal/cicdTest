@@ -21,7 +21,6 @@ packages = [
     "kronoterm_voice_actions",
     "kronoterm_voice_actions.wyoming",
     "kronoterm_voice_actions.test",
-    "kronoterm_voice_actions.test_local",
 ]
 
 [project.optional-dependencies]
