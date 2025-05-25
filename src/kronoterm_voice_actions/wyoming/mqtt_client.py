@@ -94,9 +94,9 @@ class MqttClient:
         return val
 
 
-    async def set_temperature(self, addr: RegisterAddress, value: float, desc: str = "") -> float:
+    async def set_temperature(self, addr: RegisterAddress, temperature: float, desc: str = "") -> float:
         """Attempts to set the specified temperature and returns the actual new value"""
-        raw = int(value * 10)
+        raw = int(temperature * 10)
         await self.write(addr, raw)
         return await self.read_temperature(addr, desc)
 
@@ -235,14 +235,14 @@ class MqttClient:
         return f"Trenutna obremenjenost toplotne črpalke: {load} procentov."
 
 
-    async def set_dhw_target_temperature(self, target_temp: float) -> str:
+    async def set_dhw_target_temperature(self, temperature: float) -> str:
         """Želena temperatura sanitarne vode"""
-        actual = await self.set_temperature(RegisterAddress.DHW_TARGET_TEMP, target_temp)
+        actual = await self.set_temperature(RegisterAddress.DHW_TARGET_TEMP, temperature)
         warning = ""
-        if actual < target_temp:
+        if actual < temperature:
             warning = ("Izbrana temperatura je previsoka. Najvišja podprta "
                        f"temperatura za sanitarno vodo je {deg_imenovalnik(actual)}.")
-        elif actual > target_temp:
+        elif actual > temperature:
             warning = ("Izbrana temperatura je prenizka. Najnižja podprta "
                        f"temperatura za sanitarno vodo je {deg_imenovalnik(actual)}.")
 
@@ -295,14 +295,14 @@ class MqttClient:
         return f"Trenutna temperatura sanitarne vode je {deg_imenovalnik(temp)}."
 
 
-    async def set_loop1_room_target_temp(self, target_temp: float) -> str:
+    async def set_loop1_room_target_temp(self, temperature: float) -> str:
         """Želena temperatura 1. kroga"""
-        actual = await self.set_temperature(RegisterAddress.LOOP_1_TARGET_ROOM_TEMP, target_temp)
+        actual = await self.set_temperature(RegisterAddress.LOOP_1_TARGET_ROOM_TEMP, temperature)
         warning = ""
-        if actual < target_temp:
+        if actual < temperature:
             warning = ("Izbrana temperatura je previsoka. Najvišja podprta "
                        f"temperatura za prostor prvega kroga je {deg_imenovalnik(actual)}.")
-        elif actual > target_temp:
+        elif actual > temperature:
             warning = ("Izbrana temperatura je prenizka. Najnižja podprta "
                        f"temperatura za prostor prvega kroga je {deg_imenovalnik(actual)}.")
 
@@ -352,14 +352,14 @@ class MqttClient:
         return f"Trenutna temperatura prvega ogrevalnega kroga: {deg_imenovalnik(temp)}."
 
 
-    async def set_loop2_room_target_temp(self, target_temp: float) -> str:
+    async def set_loop2_room_target_temp(self, temperature: float) -> str:
         """Želena temperatura prostora 2. kroga"""
-        actual = await self.set_temperature(RegisterAddress.LOOP_2_TARGET_ROOM_TEMP, target_temp)
+        actual = await self.set_temperature(RegisterAddress.LOOP_2_TARGET_ROOM_TEMP, temperature)
         warning = ""
-        if actual < target_temp:
+        if actual < temperature:
             warning = ("Izbrana temperatura je previsoka. Najvišja podprta "
                        f"temperatura za prostor drugega kroga je {deg_imenovalnik(actual)}.")
-        elif actual > target_temp:
+        elif actual > temperature:
             warning = ("Izbrana temperatura je prenizka. Najnižja podprta "
                        f"temperatura za prostor drugega kroga je {deg_imenovalnik(actual)}.")
 
@@ -409,14 +409,14 @@ class MqttClient:
         return f"Trenutna temperatura drugega ogrevalnega kroga: {deg_imenovalnik(temp)}."
 
 
-    async def set_loop3_room_target_temp(self, target_temp: float) -> str:
+    async def set_loop3_room_target_temp(self, temperature: float) -> str:
         """Želena temperatura prostora 3. kroga"""
-        actual = await self.set_temperature(RegisterAddress.LOOP_3_ROOM_TARGET_TEMP, target_temp)
+        actual = await self.set_temperature(RegisterAddress.LOOP_3_ROOM_TARGET_TEMP, temperature)
         warning = ""
-        if actual < target_temp:
+        if actual < temperature:
             warning = ("Izbrana temperatura je previsoka. Najvišja podprta "
                        f"temperatura za prostor tretjega kroga je {deg_imenovalnik(actual)}.")
-        elif actual > target_temp:
+        elif actual > temperature:
             warning = ("Izbrana temperatura je prenizka. Najnižja podprta "
                        f"temperatura za prostor tretjega kroga je {deg_imenovalnik(actual)}.")
 
@@ -466,14 +466,14 @@ class MqttClient:
         return f"Trenutna temperatura tretjega ogrevalnega kroga: {deg_imenovalnik(temp)}."
 
 
-    async def set_loop4_room_target_temp(self, target_temp: float) -> str:
+    async def set_loop4_room_target_temp(self, temperature: float) -> str:
         """Želena temperatura prostora 4. kroga"""
-        actual = await self.set_temperature(RegisterAddress.LOOP_4_ROOM_TARGET_TEMP, target_temp)
+        actual = await self.set_temperature(RegisterAddress.LOOP_4_ROOM_TARGET_TEMP, temperature)
         warning = ""
-        if actual < target_temp:
+        if actual < temperature:
             warning = ("Izbrana temperatura je previsoka. Najvišja podprta "
                        f"temperatura za prostor četrtega kroga je {deg_imenovalnik(actual)}.")
-        elif actual > target_temp:
+        elif actual > temperature:
             warning = ("Izbrana temperatura je prenizka. Najnižja podprta "
                        f"temperatura za prostor četrtega kroga je {deg_imenovalnik(actual)}.")
 
