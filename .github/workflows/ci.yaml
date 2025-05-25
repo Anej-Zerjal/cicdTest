@@ -50,22 +50,33 @@ jobs:
 
             - name: Run integration tests on HAOS
               run: |
-                  ssh haos << 'EOF'
-                      # 1) Drop from the locked-down HA CLI into the host OS shell
+                  ssh -tt haos << 'EOF'
+                      # 1) leave the HA CLI and get to the host OS
                       login
 
-                      # 2) Go to your workspace
+                      # 2) cd into your workspace
                       cd ${{ env.HAOS_PROJECT_WORKSPACE }}
 
-                      # 3) Fire up a Python container, mount in your code and run pytest
+                      # 3) run docker, tee‐ing both stdout and stderr into /tmp/ci.log
                       docker run --rm \
-                      -v "$(pwd)":/work -w /work \
-                      python:3.13-slim \
-                      bash -eux << 'SCRIPT'
+                          -v "$(pwd)":/work \
+                          -w /work \
+                          python:3.13-slim \
+                          bash -eux -c '
                           pip install --upgrade pip
-                          pip install -e ".[test]" "homeassistant==${{ env.HA_VERSION }}"
+                          pip install -e ".[test]" "homeassistant==${HA_VERSION}"
                           pytest -v src/kronoterm_voice_actions/test_local/
-                      SCRIPT
+                          ' 2>&1 | tee /tmp/ci.log
+
+                      # 4) in case of failure, preserve exit code
+                      EXIT_CODE=${PIPESTATUS[0]}
+
+                      # 5) cat the log so it shows up in GH Actions output
+                      echo "───────── CONTAINER LOGS ─────────"
+                      cat /tmp/ci.log
+
+                      # 6) exit with the original test exit code
+                      exit $EXIT_CODE
                   EOF
 
     # ──────────────────────── deploy ─────────────────────────
