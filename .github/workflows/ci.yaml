@@ -35,83 +35,83 @@ jobs:
     #               pytest -v --cov=src/kronoterm_voice_actions --cov-report=xml src/kronoterm_voice_actions/test/
 
     # ───────────────────────── Target machine tests (Self-Hosted) ───────────────────
-    # target_machine_tests:
-    #     runs-on: [self-hosted, Linux, ARM] # Ensure your runner has these labels
-    #     # needs: matcher_unit_tests
-
-    #     steps:
-    #         - uses: actions/checkout@v4
-
-    #         - name: Sync integration to HAOS
-    #           run: |
-    #               # Sync the whole project for easier installation
-    #               rsync -az --delete ./ \
-    #                     haos:${{ env.HAOS_PROJECT_WORKSPACE }}/
-
-    #         - name: Run integration tests on HAOS
-    #           run: |
-    #               ssh haos << EOF
-    #                     echo "--- Running tests on HAOS ---"
-    #                     cd ${{ env.HAOS_PROJECT_WORKSPACE }}
-
-    #                     echo "Current directory on HAOS after cd: $(pwd)"
-    #                     echo "Listing contents of HAOS workspace (pyproject.toml should be here):"
-    #                     ls -la
-
-    #                     echo "Checking specifically for pyproject.toml..."
-    #                     if [ -f "pyproject.toml" ]; then
-    #                         echo "pyproject.toml FOUND in $(pwd)"
-    #                     else
-    #                         echo "ERROR: pyproject.toml NOT FOUND in $(pwd)"
-    #                         echo "Contents of pyproject.toml if found (for sanity check):"
-    #                         cat pyproject.toml || echo "cat pyproject.toml failed."
-    #                         # If not found, the rsync command is the prime suspect,
-    #                         # or the path it's rsyncing from on the runner is incorrect.
-    #                     fi
-
-    #                     echo "Running Docker container..."
-    #                     # Ensure $(pwd) correctly expands to the absolute path of HAOS_PROJECT_WORKSPACE
-    #                     docker run --rm -v "$(pwd)":/work -w /work python:3.13-slim bash -c "
-    #                       echo '--- Inside Docker Container ---'
-    #                       echo 'Current directory inside Docker: \$(pwd)'
-    #                       echo 'Listing contents of /work (where pyproject.toml should be):'
-    #                       ls -la /work/
-
-    #                       echo 'Checking for /work/pyproject.toml specifically...'
-    #                       if [ -f "/work/pyproject.toml" ]; then
-    #                           echo "pyproject.toml FOUND in /work"
-    #                       else
-    #                           echo "ERROR: pyproject.toml NOT FOUND in /work"
-    #                           exit 1 # Exit script if critical file is missing
-    #                       fi
-
-    #                       echo 'Upgrading pip...'
-    #                       pip install --upgrade pip
-    #                       echo 'Attempting pip install -e .[test]...'
-    #                       pip install -e .[test]
-
-    #                       echo 'Running pytest...'
-    #                       pytest -v src/kronoterm_voice_actions/test_local/
-    #                       echo '--- Exiting Docker Container ---'
-    #                     "
-
-    #                     echo "--- Finished tests ---"
-    #               EOF
-
-    # ──────────────────────── deploy ─────────────────────────
-    deploy:
-        if: github.ref == 'refs/heads/main'
-        runs-on: [self-hosted, Linux, ARM]
-        needs: target_machine_tests
+    target_machine_tests:
+        runs-on: [self-hosted, Linux, ARM] # Ensure your runner has these labels
+        # needs: matcher_unit_tests
 
         steps:
             - uses: actions/checkout@v4
 
             - name: Sync integration to HAOS
               run: |
-                  rsync -az src/kronoterm_voice_actions/ \
-                        haos:/config/custom_components/
+                  # Sync the whole project for easier installation
+                  rsync -az --delete ./ \
+                        haos:${{ env.HAOS_PROJECT_WORKSPACE }}/
 
-            - name: Restart Home Assistant
+            - name: Run integration tests on HAOS
               run: |
-                  ssh haos "/usr/bin/ha core restart"
+                  ssh haos << EOF
+                        echo "--- Running tests on HAOS ---"
+                        cd ${{ env.HAOS_PROJECT_WORKSPACE }}
+
+                        echo "Current directory on HAOS after cd: $(pwd)"
+                        echo "Listing contents of HAOS workspace (pyproject.toml should be here):"
+                        ls -la
+                        
+                        echo "Checking specifically for pyproject.toml..."
+                        if [ -f "pyproject.toml" ]; then
+                            echo "pyproject.toml FOUND in $(pwd)"
+                        else
+                            echo "ERROR: pyproject.toml NOT FOUND in $(pwd)"
+                            echo "Contents of pyproject.toml if found (for sanity check):"
+                            cat pyproject.toml || echo "cat pyproject.toml failed."
+                            # If not found, the rsync command is the prime suspect,
+                            # or the path it's rsyncing from on the runner is incorrect.
+                        fi
+
+                        echo "Running Docker container..."
+                        # Ensure $(pwd) correctly expands to the absolute path of HAOS_PROJECT_WORKSPACE
+                        docker run --rm -v "${{ env.HAOS_PROJECT_WORKSPACE }}":/work -w /work python:3.13-slim bash -c "
+                          echo '--- Inside Docker Container ---'
+                          echo 'Current directory inside Docker: \${{ env.HAOS_PROJECT_WORKSPACE }}'
+                          echo 'Listing contents of /work (where pyproject.toml should be):'
+                          ls -la /work/
+                          
+                          echo 'Checking for /work/pyproject.toml specifically...'
+                          if [ -f "/work/pyproject.toml" ]; then
+                              echo "pyproject.toml FOUND in /work"
+                          else
+                              echo "ERROR: pyproject.toml NOT FOUND in /work"
+                              exit 1 # Exit script if critical file is missing
+                          fi
+                          
+                          echo 'Upgrading pip...'
+                          pip install --upgrade pip
+                          echo 'Attempting pip install -e .[test]...'
+                          pip install -e .[test]
+                          
+                          echo 'Running pytest...'
+                          pytest -v src/kronoterm_voice_actions/test_local/
+                          echo '--- Exiting Docker Container ---'
+                        "
+
+                        echo "--- Finished tests ---"
+                  EOF
+
+    # ──────────────────────── deploy ─────────────────────────
+    # deploy:
+    #     if: github.ref == 'refs/heads/main'
+    #     runs-on: [self-hosted, Linux, ARM]
+    #     needs: target_machine_tests
+
+    #     steps:
+    #         - uses: actions/checkout@v4
+
+    #         - name: Sync integration to HAOS
+    #           run: |
+    #               rsync -az src/kronoterm_voice_actions/ \
+    #                     haos:/config/custom_components/
+
+    #         - name: Restart Home Assistant
+    #           run: |
+    #               ssh haos "/usr/bin/ha core restart"
