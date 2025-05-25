@@ -1,5 +1,3 @@
-"""Models for wyoming."""
-
 from dataclasses import dataclass
 from typing import Any
 

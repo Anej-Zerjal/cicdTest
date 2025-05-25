@@ -1,5 +1,4 @@
 """Support for Wyoming wake-word-detection services."""
-# CICD test 2
 
 import asyncio
 from collections.abc import AsyncIterable

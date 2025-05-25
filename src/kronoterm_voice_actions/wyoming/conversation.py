@@ -88,27 +88,18 @@ class WyomingConversationEntity(
             )
 
         try:
-            response = await execute_command(user_input.text, username, password, self.hass)
+            response = await execute_command(user_input.text)
+            intent_response.async_set_speech(response)
+
         except Exception as e:
-            _LOGGER.exception("Error during command execution")
+            _LOGGER.exception("Error during command execution" + str(e))
+            intent_response.async_set_speech("Pri izvajanju je prišlo do napake")
             intent_response.async_set_error(
                 intent.IntentResponseErrorCode.UNKNOWN, f"Error: {e}"
             )
             return conversation.ConversationResult(
                 response=intent_response, conversation_id=conversation_id
             )
-
-        intent_response.async_set_speech(response)
-        # if matched_response is not None:
-        #     _LOGGER.debug(
-        #         "Custom matcher matched '%s' -> '%s'", user_input.text, matched_response
-        #     )
-        #     intent_response.async_set_speech(matched_response)
-        # else:
-        #
-        #     _LOGGER.debug("Custom matcher did not match: '%s'", user_input.text)
-        #
-        #     intent_response.async_set_speech("Oprostite, tega ukaza ne razumem.")
 
         return conversation.ConversationResult(
             response=intent_response, conversation_id=conversation_id

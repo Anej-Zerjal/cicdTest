@@ -25,9 +25,6 @@ class APIEndpoint(Enum):
 
     ADVANCED_SETTINGS = "TopPage=3&Subpage=11&Action=1"
 
-    # TIMELINE_GRAPH = "TopPage=4&Subpage=1&Action=3"
-    # CONSUMPTION_HISTOGRAM = "TopPage=4&Subpage=4&Action=4"
-
 
 class WorkingFunction(Enum):
     """Heat pump working functions"""

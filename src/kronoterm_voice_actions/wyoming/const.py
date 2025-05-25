@@ -1,4 +1,4 @@
-"""Constants for the Wyoming integration."""
+"""Constants for the integration."""
 
 DOMAIN = "wyoming"
 
@@ -8,3 +8,5 @@ SAMPLE_CHANNELS = 1
 
 # For multi-speaker voices, this is the name of the selected speaker.
 ATTR_SPEAKER = "speaker"
+
+MODBUS_SLAVE_ID = 20
