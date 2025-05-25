@@ -242,14 +242,12 @@ def replace_numbers_with_digits(text: str) -> str:
 
 def insert_numbers_back(text: str) -> str:
     words = text.split()
-    new_words = []
-    for word in words:
-        if word == 1 or word == 2 or word == 3 or word == 4:
-            new_words.append(digit_to_text[word])
-        else:
-            new_words.append(word)
+    for i in range(len(words)):
+        word = words[i]
+        if word == "1" or word == "2" or word == "3" or word == "4":
+            words[i] = digit_to_text[word]
 
-    return ' '.join(new_words)
+    return ' '.join(words)
 
 
 def match_command(text: str, commands: list[str]) -> tuple[str, float | None]:
@@ -263,6 +261,7 @@ def match_command(text: str, commands: list[str]) -> tuple[str, float | None]:
         text = text.replace(temperature, "<temperature>")
 
     text = insert_numbers_back(text)
+    print(f"Processed text: {text}")
     match = difflib.get_close_matches(text, commands, n=1, cutoff=0.65)
     if not match:
         return "", None
