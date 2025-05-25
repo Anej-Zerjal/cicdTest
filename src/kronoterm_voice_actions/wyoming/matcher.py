@@ -74,24 +74,28 @@ def parse_slovene_number(text: str) -> int:
 
 
 class _CmdTemplate:
-    # 1. Removed "action" from __slots__
     __slots__ = ("template", "slot_names", "fixed", "regex")
 
-    # 2. Modified __init__ to not take or store 'action'
     def __init__(self, tpl: str):
         self.template = tpl
-        # slots are hard-coded in JSON (e.g. <value>), loop numbers are literal words
         self.slot_names = re.findall(r"<(\w+)>", tpl)
-        # remove slots for fuzzy matching
         self.fixed = re.sub(r"<\w+>", "", tpl).strip().lower()
-        # build a regex that captures each <slot>
+
         pat = re.escape(tpl.lower())
-        pat = re.sub(r"\\ ", r"\\s+", pat)
+        pat = re.sub(r"\\ ", r"\\s+", pat)  # Allow flexible spacing
+
         for name in self.slot_names:
+            if name == "temperature":
+                slot_pattern = r"(?P<temperature>[\d\wčšž\s]+?)"  # Keep it somewhat broad initially
+            else:
+                # Generic pattern for other potential future slots
+                slot_pattern = rf"(?P<{name}>[\wčšž\s]+?)"
+
             pat = pat.replace(
                 re.escape(f"<{name}>"),
-                rf"(?P<{name}>[\wčšž\s]+?)"  # Added ČŠŽ to allow Slovene chars in slots
+                slot_pattern
             )
+
         self.regex = re.compile(rf"^{pat}$", re.IGNORECASE)
 
 
@@ -126,24 +130,26 @@ class KronotermParser:
         match = cmd.regex.match(clean)
         params: Dict[str, Any] = {}
         if match:
-            for name, raw in match.groupdict().items():
-                raw = raw.strip()
-                try:
-                    params[name] = parse_slovene_number(raw)
-                except ValueError:
-                    params[name] = raw
-        else:
-            if cmd.slot_names:
-                last_words = clean.split()
-                potential_slot_value = clean.replace(best_fixed, "").strip()
-                if not potential_slot_value and last_words:
-                    potential_slot_value = last_words[-1]
-
-                for name in cmd.slot_names:  # Assign the same potential value to all slots
+            for name, raw_value_from_regex in match.groupdict().items():
+                raw_value_from_regex = raw_value_from_regex.strip()
+                if name == "temperature":
                     try:
-                        params[name] = parse_slovene_number(potential_slot_value)
+                        cleaned_raw_value = raw_value_from_regex
+                        for suffix_to_remove in [" stopinj", " stopinje", " stopinjo"]:
+                            if cleaned_raw_value.lower().endswith(suffix_to_remove):
+                                cleaned_raw_value = cleaned_raw_value[:-len(suffix_to_remove)].strip()
+                                break  # Remove only one suffix
+
+                        params[name] = parse_slovene_number(cleaned_raw_value)
                     except ValueError:
-                        params[name] = potential_slot_value
+                        params[name] = raw_value_from_regex  # Fallback to raw if number parsing fails
+                else:
+                    # For other types of slots in the future
+                    try:
+                        # Assuming other future slots might also be numbers, or handle differently
+                        params[name] = parse_slovene_number(raw_value_from_regex)
+                    except ValueError:
+                        params[name] = raw_value_from_regex
 
         return KronotermAction(action=cmd.template, parameters=params)
 
