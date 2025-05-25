@@ -12,7 +12,8 @@ dependencies    = [
     "wyoming==1.5.4",
     "rapidfuzz",
     "unidecode",
-    "pymodbus"
+    "pymodbus",
+    "pytest"
 ]
 
 [tool.setuptools]

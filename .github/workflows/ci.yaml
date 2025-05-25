@@ -1,53 +1,76 @@
 name: local-ci
 
 on:
-  # run tests on every push and PR…
-  push:
-  pull_request:
+    push:
+    pull_request:
 
 env:
-  HA_VERSION: "2025.5.0"               # pin Home-Assistant core used for tests
+    HA_VERSION: "2025.5.0"
 
 jobs:
-  # ───────────────────────── tests ──────────────────────────
-  test:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python: ["3.11"]
+    # ───────────────────────── unit tests ──────────────────────────
+    unit_tests:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                python: ["3.11"]
 
-    steps:
-      - uses: actions/checkout@v4
+        steps:
+            - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python }}
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: ${{ matrix.python }}
 
-      - name: Install deps
-        run: |
-          python -m pip install -U pip
-          pip install ".[test]" "homeassistant==${HA_VERSION}"
+            - name: Install deps
+              run: |
+                  python -m pip install -U pip
+                  pip install ".[test]" "homeassistant==${HA_VERSION}"
 
-      - name: Run pytest + coverage gate
-        run: |
-          pytest -q \
-            --cov=kronoterm_voice_actions \
-            --cov-report=xml \
-            --cov-fail-under=85
+            - name: Run unit tests + coverage gate
+              run: |
+                  pytest -q \
+                    -m "not target_machine" \  # Exclude tests marked with 'target_machine'
+                    --cov=kronoterm_voice_actions \
+                    --cov-report=xml \
+                    --cov-fail-under=85
 
-  # ──────────────────────── deploy ─────────────────────────
-  deploy:
-    if: github.ref == 'refs/heads/main'    # deploy **only** from main
-    runs-on: [self-hosted, Linux, ARM]
+    # ───────────────────────── target machine tests ──────────────────────────
+    target_machine_tests:
+        runs-on: [self-hosted, Linux, ARM]
+        needs: unit_tests
 
-    steps:
-      - uses: actions/checkout@v4          # checkout same commit being deployed
+        steps:
+            - uses: actions/checkout@v4
 
-      - name: Sync integration to HAOS
-        run: |
-          rsync -az src/kronoterm_voice_actions/ \
-                haos:/config/custom_components/
+            - name: Sync integration to HAOS
+              run: |
+                  rsync -az test/ haos:/config/test/
 
-      - name: Restart Home Assistant
-        run: |
-          ssh haos "/usr/bin/ha core restart"
+            - name: Install dependencies on target
+              run: |
+                  # SSH into haos and install any necessary dependencies for the tests
+                  ssh haos "pip install homeassistant==${HA_VERSION} pytest"
+
+            - name: Run tests on target machine
+              run: |
+                  # SSH into haos and run pytest targeting the specific tests
+                  ssh haos "cd config/test && pytest -q -m target_machine"
+
+    # ──────────────────────── deploy ─────────────────────────
+    deploy:
+        if: github.ref == 'refs/heads/main'
+        runs-on: [self-hosted, Linux, ARM]
+        needs: target_machine_tests # Ensure target machine tests pass before deploying
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Sync integration to HAOS
+              run: |
+                  rsync -az src/kronoterm_voice_actions/ \
+                        haos:/config/custom_components/
+
+            - name: Restart Home Assistant
+              run: |
+                  ssh haos "/usr/bin/ha core restart"
