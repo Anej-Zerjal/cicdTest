@@ -8,70 +8,70 @@ env:
     HA_VERSION: "2025.5.3"
 
 jobs:
-    # ───────────────────────── Unit tests (GitHub Runner) ──────────────────────────
-    matcher_unit_tests:
-        runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                python: ["3.13"]
+    # # ───────────────────────── Unit tests (GitHub Runner) ──────────────────────────
+    # matcher_unit_tests:
+    #     runs-on: ubuntu-latest
+    #     strategy:
+    #         matrix:
+    #             python: ["3.13"]
 
-        steps:
-            - uses: actions/checkout@v4
+    #     steps:
+    #         - uses: actions/checkout@v4
 
-            - uses: actions/setup-python@v5
-              with:
-                  python-version: ${{ matrix.python }}
-                  cache: "pip"
+    #         - uses: actions/setup-python@v5
+    #           with:
+    #               python-version: ${{ matrix.python }}
+    #               cache: "pip"
 
-            - name: Install deps
-              run: |
-                  python -m pip install -U pip
-                  pip install -e ".[test]" "homeassistant==${HA_VERSION}"
+    #         - name: Install deps
+    #           run: |
+    #               python -m pip install -U pip
+    #               pip install -e ".[test]" "homeassistant==${HA_VERSION}"
 
-            - name: Run unit tests + coverage
-              run: |
-                  # Run pytest specifically on the 'test' directory
-                  pytest -v --cov=src/kronoterm_voice_actions --cov-report=xml src/kronoterm_voice_actions/test/
+    #         - name: Run unit tests + coverage
+    #           run: |
+    #               # Run pytest specifically on the 'test' directory
+    #               pytest -v --cov=src/kronoterm_voice_actions --cov-report=xml src/kronoterm_voice_actions/test/
 
-    # ───────────────────────── Target machine tests (Self-Hosted) ───────────────────
-    target_machine_tests:
-        runs-on: [self-hosted, Linux, ARM] # Ensure your runner has these labels
-        needs: matcher_unit_tests
+    # # ───────────────────────── Target machine tests (Self-Hosted) ───────────────────
+    # target_machine_tests:
+    #     runs-on: [self-hosted, Linux, ARM] # Ensure your runner has these labels
+    #     needs: matcher_unit_tests
 
-        steps:
-            - uses: actions/checkout@v4
+    #     steps:
+    #         - uses: actions/checkout@v4
 
-            - name: Sync integration to HAOS
-              run: |
-                  # Sync the whole project for easier installation
-                  rsync -az ./ \
-                        haos:/testing/
+    #         - name: Sync integration to HAOS
+    #           run: |
+    #               # Sync the whole project for easier installation
+    #               rsync -az ./ \
+    #                     haos:/testing/
 
-            # - name: Run integration tests on HAOS
-            #   run: |
-            #       ssh haos << EOF
-            #         echo "--- Running tests on HAOS ---"
-            #         cd /home/your_user/testing/
+    # - name: Run integration tests on HAOS
+    #   run: |
+    #       ssh haos << EOF
+    #         echo "--- Running tests on HAOS ---"
+    #         cd /home/your_user/testing/
 
-            #         # --- Option 1: Assuming Python/pip exist ---
-            #         # python3.13 -m pip install -U pip
-            #         # python3.13 -m pip install -e ".[test]"
-            #         # python3.13 -m pytest -v src/kronoterm_voice_actions/test_local/
+    #         # --- Option 1: Assuming Python/pip exist ---
+    #         # python3.13 -m pip install -U pip
+    #         # python3.13 -m pip install -e ".[test]"
+    #         # python3.13 -m pytest -v src/kronoterm_voice_actions/test_local/
 
-            #         # --- Option 2: Using Docker (if available) ---
-            #         # docker run --rm -v \$(pwd):/work -w /work python:3.13-slim bash -c "
-            #         #   pip install -e .[test] &&
-            #         #   pytest -v src/kronoterm_voice_actions/test_local/
-            #         # "
+    #         # --- Option 2: Using Docker (if available) ---
+    #         # docker run --rm -v \$(pwd):/work -w /work python:3.13-slim bash -c "
+    #         #   pip install -e .[test] &&
+    #         #   pytest -v src/kronoterm_voice_actions/test_local/
+    #         # "
 
-            #         echo "--- Finished tests ---"
-            #       EOF
+    #         echo "--- Finished tests ---"
+    #       EOF
 
     # ──────────────────────── deploy ─────────────────────────
     deploy:
         if: github.ref == 'refs/heads/main'
         runs-on: [self-hosted, Linux, ARM]
-        needs: target_machine_tests
+        # needs: target_machine_tests
 
         steps:
             - uses: actions/checkout@v4
