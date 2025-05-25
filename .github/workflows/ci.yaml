@@ -29,59 +29,12 @@ jobs:
 
             - name: Run matcher unit tests + coverage gate
               run: |
-                  pytest -q \
-                    -m "not target_machine"
-    # ───────────────────────── target machine tests ──────────────────────────
-    target_machine_tests:
-        runs-on: [self-hosted, Linux, ARM]
-        needs: matcher_unit_tests
+                  pytest -q
 
-        steps:
-            - uses: actions/checkout@v4
-
-            - name: Run tests on target machine
-              run: |
-                  # Sync the integration and tests to HAOS
-                  rsync -az test/ haos:/config/test/
-                  rsync -az src/kronoterm_voice_actions/ haos:/config/test/kronoterm_voice_actions/ # Sync your integration source too, it might be needed for tests
-
-                  # SSH into haos, set up venv, install deps, and run tests
-                  ssh haos << EOF
-                    # Define the path to the test directory on haos
-                    TEST_DIR="/config/test"
-                    VENV_DIR="\$TEST_DIR/.venv_tests" # Create venv inside the test dir
-
-                    # Create a virtual environment if it doesn't exist
-                    if [ ! -d "\$VENV_DIR" ]; then
-                      echo "Creating virtual environment..."
-                      python3 -m venv "\$VENV_DIR"
-                    fi
-
-                    # Activate the virtual environment
-                    . "\$VENV_DIR/bin/activate"
-
-                    # Install pytest, homeassistant, and your integration within the venv
-                    # Use --no-deps for homeassistant if you just need the test environment
-                    pip install --upgrade pip
-                    pip install pytest homeassistant==2025.1.4
-                    # Install your integration from the synced source code
-                    pip install "\$TEST_DIR/"
-
-                    # Change directory to the test directory
-                    cd "\$TEST_DIR"
-
-                    # Run pytest targeting the specific tests within the activated venv
-                    pytest -q -m target_machine
-
-                    # Deactivate the virtual environment
-                    deactivate
-                  EOF
-
-    # ──────────────────────── deploy ─────────────────────────
     deploy:
         if: github.ref == 'refs/heads/main'
         runs-on: [self-hosted, Linux, ARM]
-        needs: target_machine_tests
+        needs: matcher_unit_tests
 
         steps:
             - uses: actions/checkout@v4
