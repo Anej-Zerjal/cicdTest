@@ -51,26 +51,9 @@ jobs:
             - name: Run integration tests on HAOS
               run: |
                   ssh haos << 'EOF'
-                    docker run --rm \
-                        -v "${{ env.HAOS_PROJECT_WORKSPACE }}:/work" \
-                        -w /work \
-                        python:3.13-slim \
-                        /bin/bash -s << 'SCRIPT'
-                            set -eux
-                            cd /work
-                            echo "--- Inside Docker Container ---"
-                            pwd
-                            ls -la
-                            if [ -f pyproject.toml ]; then
-                                echo "pyproject.toml FOUND in /work"
-                            else
-                                echo "ERROR: missing pyproject.toml"
-                                exit 1
-                            fi
-                            pip install --upgrade pip
-                            pip install -e ".[test]"
-                            pytest -v src/kronoterm_voice_actions/test_local/
-                        SCRIPT
+                    cd ${{ env.HAOS_PROJECT_WORKSPACE }}
+                    pwd
+                    pytest -v src/kronoterm_voice_actions/test/
                   EOF
 
     # ──────────────────────── deploy ─────────────────────────
