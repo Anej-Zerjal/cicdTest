@@ -9,90 +9,47 @@ env:
     HAOS_PROJECT_WORKSPACE: /tmp/kronoterm_voice_actions_ci_workspace
 
 jobs:
-    # # ───────────────────────── Unit tests (GitHub Runner) ──────────────────────────
-    # matcher_unit_tests:
-    #     runs-on: ubuntu-latest
-    #     strategy:
-    #         matrix:
-    #             python: ["3.13"]
+    # ───────────────────────── Unit tests (GitHub Runner) ──────────────────────────
+    matcher_unit_tests:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                python: ["3.13"]
 
-    #     steps:
-    #         - uses: actions/checkout@v4
+        steps:
+            - uses: actions/checkout@v4
 
-    #         - uses: actions/setup-python@v5
-    #           with:
-    #               python-version: ${{ matrix.python }}
-    #               cache: "pip"
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: ${{ matrix.python }}
+                  cache: "pip"
 
-    #         - name: Install deps
-    #           run: |
-    #               python -m pip install -U pip
-    #               pip install -e ".[test]" "homeassistant==${HA_VERSION}"
+            - name: Install deps
+              run: |
+                  python -m pip install -U pip
+                  pip install -e ".[test]" "homeassistant==${HA_VERSION}"
 
-    #         - name: Run unit tests + coverage
-    #           run: |
-    #               # Run pytest specifically on the 'test' directory
-    #               pytest -v --cov=src/kronoterm_voice_actions --cov-report=xml src/kronoterm_voice_actions/test/
+            - name: Run unit tests + coverage
+              run: |
+                  # Run pytest specifically on the 'test' directory
+                  pytest -v --cov=src/kronoterm_voice_actions --cov-report=xml src/kronoterm_voice_actions/test/
 
-    # ───────────────────────── Target machine tests (Self-Hosted) ───────────────────
-    target_machine_tests:
-        runs-on: [self-hosted, Linux, ARM] # Ensure your runner has these labels
-        # needs: matcher_unit_tests
+    ───────────────────────── Target machine tests (Self-Hosted) ───────────────────
+
+    ──────────────────────── deploy ─────────────────────────
+    deploy:
+        if: github.ref == 'refs/heads/main'
+        runs-on: [self-hosted, Linux, ARM]
+        needs: matcher_unit_tests
 
         steps:
             - uses: actions/checkout@v4
 
             - name: Sync integration to HAOS
               run: |
-                  # Sync the whole project for easier installation
-                  rsync -az --delete ./ \
-                        haos:${{ env.HAOS_PROJECT_WORKSPACE }}/
+                  rsync -az src/kronoterm_voice_actions/ \
+                        haos:/config/custom_components/
 
-            - name: Run integration tests on HAOS
+            - name: Restart Home Assistant
               run: |
-                  ssh haos << 'EOF'
-                      # 1) leave the HA CLI and get to the host OS
-                      login
-
-                      # 2) cd into your workspace
-                      cd ${{ env.HAOS_PROJECT_WORKSPACE }}
-
-                      # 3) run docker, tee‐ing both stdout and stderr into /tmp/ci.log
-                      docker run --rm \
-                          -v "${{ env.HAOS_PROJECT_WORKSPACE }}":/work \
-                          -w /work \
-                          python:3.13-slim \
-                          bash -eux -c '
-                          pip install --upgrade pip
-                          pip install -e ".[test]" "homeassistant==2025.5.3"
-                          pytest -v src/kronoterm_voice_actions/test_local/
-                          ' 2>&1 | tee /tmp/ci.log
-
-                      # 4) in case of failure, preserve exit code
-                      EXIT_CODE=${PIPESTATUS[0]}
-
-                      # 5) cat the log so it shows up in GH Actions output
-                      echo "───────── CONTAINER LOGS ─────────"
-                      cat /tmp/ci.log
-
-                      # 6) exit with the original test exit code
-                      exit $EXIT_CODE
-                  EOF
-
-    # ──────────────────────── deploy ─────────────────────────
-    # deploy:
-    #     if: github.ref == 'refs/heads/main'
-    #     runs-on: [self-hosted, Linux, ARM]
-    #     needs: target_machine_tests
-
-    #     steps:
-    #         - uses: actions/checkout@v4
-
-    #         - name: Sync integration to HAOS
-    #           run: |
-    #               rsync -az src/kronoterm_voice_actions/ \
-    #                     haos:/config/custom_components/
-
-    #         - name: Restart Home Assistant
-    #           run: |
-    #               ssh haos "/usr/bin/ha core restart"
+                  ssh haos "/usr/bin/ha core restart"
