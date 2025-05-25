@@ -47,6 +47,18 @@ STEP_USER_TYPE_SCHEMA = vol.Schema(
     }
 )
 
+STEP_MQTT_DETAILS_SCHEMA = vol.Schema(
+    {
+        vol.Required(CONF_HOST): str,
+        vol.Required(CONF_PORT): int,
+        # Optional: Add fields for MQTT username/password if your broker needs auth
+        vol.Optional(CONF_USERNAME): str,
+        vol.Optional(CONF_PASSWORD): selector.TextSelector(
+            selector.TextSelectorConfig(type=selector.TextSelectorType.PASSWORD)
+        ),
+    }
+)
+
 STEP_REMOTE_SERVICE_DATA_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_HOST): str,
@@ -107,9 +119,10 @@ class WyomingConfigFlow(ConfigFlow, domain=DOMAIN):
             return await self.async_step_remote_service()
 
         if self._entry_type == ENTRY_TYPE_CUSTOM:
-            await self.async_set_unique_id(CUSTOM_AGENT_UNIQUE_ID)
-            self._abort_if_unique_id_configured()
-            return await self.async_step_custom_agent_auth()
+            # await self.async_set_unique_id(CUSTOM_AGENT_UNIQUE_ID)
+            # self._abort_if_unique_id_configured()
+            # return await self.async_step_custom_agent_auth()
+            self.async_abort(reason="custom_agent_skipped")
 
         return self.async_abort(reason="unknown_entry_type")
 

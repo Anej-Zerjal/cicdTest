@@ -14,6 +14,7 @@ from .matcher import execute_command
 
 _LOGGER = logging.getLogger(__name__)
 
+
 async def async_setup_entry(
     hass: HomeAssistant,
     config_entry: ConfigEntry,
@@ -74,18 +75,18 @@ class WyomingConversationEntity(
         conversation_id = user_input.conversation_id or ulid_util.ulid_now()
         intent_response = intent.IntentResponse(language=user_input.language)
 
-        username = self.entry.data.get(CONF_USERNAME)
-        password = self.entry.data.get(CONF_PASSWORD)
+        # username = self.entry.data.get(CONF_USERNAME)
+        # password = self.entry.data.get(CONF_PASSWORD)
 
-        if username is None or password is None:
-            _LOGGER.error("Credentials not found for custom conversation agent.")
-            intent_response.async_set_error(
-                intent.IntentResponseErrorCode.UNKNOWN,
-                "Agent configuration error: Missing credentials.",
-            )
-            return conversation.ConversationResult(
-                response=intent_response, conversation_id=conversation_id
-            )
+        # if username is None or password is None:
+        #     _LOGGER.error("Credentials not found for custom conversation agent.")
+        #     intent_response.async_set_error(
+        #         intent.IntentResponseErrorCode.UNKNOWN,
+        #         "Agent configuration error: Missing credentials.",
+        #     )
+        #     return conversation.ConversationResult(
+        #         response=intent_response, conversation_id=conversation_id
+        #     )
 
         try:
             response = await execute_command(user_input.text)
