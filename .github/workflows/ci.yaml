@@ -34,9 +34,7 @@ jobs:
                   # Run pytest specifically on the 'test' directory
                   pytest -v --cov=src/kronoterm_voice_actions --cov-report=xml src/kronoterm_voice_actions/test/
 
-    ───────────────────────── Target machine tests (Self-Hosted) ───────────────────
-
-    ──────────────────────── deploy ─────────────────────────
+    # ──────────────────────── deploy ─────────────────────────
     deploy:
         if: github.ref == 'refs/heads/main'
         runs-on: [self-hosted, Linux, ARM]
