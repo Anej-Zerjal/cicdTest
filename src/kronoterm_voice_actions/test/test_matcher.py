@@ -7,5 +7,5 @@ import pytest
 
 
 def test_parse_slovene_number_basic():
-    assert matcher.slovenian_word_to_number_strict("ena") == 1
+    assert matcher.slovenian_word_to_number_strict("ena") == '1'
     # Add more unit tests for parse_slovene_number
