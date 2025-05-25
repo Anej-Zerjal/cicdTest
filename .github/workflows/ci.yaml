@@ -50,7 +50,7 @@ jobs:
 
             - name: Run integration tests on HAOS
               run: |
-                  ssh -tt haos << 'EOF'
+                  ssh haos << 'EOF'
                       # 1) leave the HA CLI and get to the host OS
                       login
 
