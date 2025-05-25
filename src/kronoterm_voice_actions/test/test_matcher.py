@@ -1,11 +1,163 @@
 # src/kronoterm_voice_actions/test/test_matcher.py
 
-# Import relative to the package structure
 from kronoterm_voice_actions.wyoming import matcher
-
 import pytest
 
+# Manually extracted commands from mqtt_client.py
+commands = [
+    "ali je sistem vklopljen", "ali je sistem izklopljen", "kakšno je stanje sistema",
+    "kakšna funkcija se izvaja", "kakšna funkcija delovanja se izvaja", "ali je rezervni vir vklopljen",
+    "ali je rezervni vir izklopljen", "kakšen je status rezervnega vira", "ali je alternativni vir vklopljen",
+    "ali je alternativni vir izklopljen", "kakšen je status alternativnega vira", "kakšen je trenuten režim delovanja",
+    "kakšen je režim delovanja", "kakšen je trenuten program", "kakšen je program delovanja",
+    "kakšen je status hitrega segrevanja sanitarne vode", "ali je hitro segrevanje sanitarne vode vklopljeno",
+    "ali je hitro segrevanje sanitarne vode izklopljeno", "kakšen je status odtaljevanja",
+    "ali je odtaljevanje vklopljeno", "ali je odtaljevanje izklopljeno", "ali se odtaljevanje izvaja",
+    "vklopi sistem", "vklopi toplotno črpalko in ogrevalne kroge", "izklopi sistem",
+    "izklopi toplotno črpalko in ogrevalne kroge", "nastavi normalen režim", "nastavi režim na normalen način",
+    "vklopi normalen režim", "nastavi eco režim", "nastavi režim na eco način", "vklopi eco režim",
+    "nastavi com režim", "nastavi režim na com način", "vklopi com režim", "vklopi hitro segrevanje sanitarne vode",
+    "izklopi hitro segrevanje sanitarne vode", "kakšna je trenutna obremenitev toplotne črpalke",
+    "nastavi želeno temperaturo sanitarne vode na <temperature> stopinj",
+    "nastavi temperaturo sanitarne vode na <temperature> stopinj", "segrej sanitarno vodo na <temperature> stopinj",
+    "kakšna je trenutna želena temperatura sanitarne vode", "izklopi segrevanje sanitarne vode",
+    "nastavi normalen režim sanitarne vode", "nastavi režim sanitarne vode na normalno",
+    "vklopi normalen režim segrevanja sanitarne vode", "nastavi režim sanitarne vode po urniku",
+    "vklopi režim segrevanja sanitarne vode po urniku", "kakšen je trenuten način delovanja sanitarne vode po urniku",
+    "kakšna je temperatura sanitarne vode", "nastavi temperaturo prostora ena na <temperature> stopinj",
+    "nastavi želeno temperaturo prostora prvega kroga na <temperature> stopinj",
+    "kakšna je trenutna želena temperatura prostora prvega kroga", "kakšna je trenutna želena temperatura prostora ena",
+    "izklopi prvi ogrevalni krog", "izklopi ogrevalni krog ena",
+    "nastavi delovanje prvega ogrevalnega kroga na normalni režim",
+    "nastavi delovanje ogrevalnega kroga ena na normalni režim", "vklopi normalni režim na ogrevalnem krogu ena",
+    "vklopi normalni režim na prvem ogrevalnem krogu",
+    "nastavi delovanje prvega ogrevalnega kroga na delovanje po urniku",
+    "nastavi delovanje ogrevalnega kroga ena na delovanje po urniku",
+    "vklopi delovanje po urniku na ogrevalnem krogu ena", "vklopi delovanje po urniku na prvem ogrevalnem krogu",
+    "kakšen je status delovanja prvega ogrevalnega kroga", "kakšen je status delovanja ogrevalnega kroga ena",
+    "kakšna je temperatura ogrevalnega kroga ena", "kakšna je temperatura prvega ogrevalnega kroga",
+    "nastavi temperaturo prostora dva na <temperature> stopinj",
+    "nastavi želeno temperaturo prostora drugega kroga na <temperature> stopinj",
+    "kakšna je trenutna želena temperatura prostora drugega kroga",
+    "kakšna je trenutna želena temperatura prostora dva", "izklopi drugi ogrevalni krog",
+    "izklopi ogrevalni krog dva", "nastavi delovanje drugega ogrevalnega kroga na normalni režim",
+    "nastavi delovanje ogrevalnega kroga dva na normalni režim", "vklopi normalni režim na ogrevalnem krogu dva",
+    "vklopi normalni režim na drugem ogrevalnem krogu",
+    "nastavi delovanje drugega ogrevalnega kroga na delovanje po urniku",
+    "nastavi delovanje ogrevalnega kroga dva na delovanje po urniku",
+    "vklopi delovanje po urniku na ogrevalnem krogu dva", "vklopi delovanje po urniku na drugem ogrevalnem krogu",
+    "kakšen je status delovanja drugega ogrevalnega kroga", "kakšen je status delovanja ogrevalnega kroga dva",
+    "kakšna je temperatura ogrevalnega kroga dva", "kakšna je temperatura drugega ogrevalnega kroga",
+    "nastavi temperaturo prostora tri na <temperature> stopinj",
+    "nastavi želeno temperaturo prostora tretjega kroga na <temperature> stopinj",
+    "kakšna je trenutna želena temperatura prostora tretjega kroga",
+    "kakšna je trenutna želena temperatura prostora tri", "izklopi tretji ogrevalni krog",
+    "izklopi ogrevalni krog tri", "nastavi delovanje tretjega ogrevalnega kroga na normalni režim",
+    "nastavi delovanje ogrevalnega kroga tri na normalni režim", "vklopi normalni režim na ogrevalnem krogu tri",
+    "vklopi normalni režim na tretjem ogrevalnem krogu",
+    "nastavi delovanje tretjega ogrevalnega kroga na delovanje po urniku",
+    "nastavi delovanje ogrevalnega kroga tri na delovanje po urniku",
+    "vklopi delovanje po urniku na ogrevalnem krogu tri", "vklopi delovanje po urniku na tretjem ogrevalnem krogu",
+    "kakšen je status delovanja tretjega ogrevalnega kroga", "kakšen je status delovanja ogrevalnega kroga tri",
+    "kakšna je temperatura ogrevalnega kroga tri", "kakšna je temperatura tretjega ogrevalnega kroga",
+    "nastavi temperaturo prostora štiri na <temperature> stopinj",
+    "nastavi želeno temperaturo prostora četrtega kroga na <temperature> stopinj",
+    "kakšna je trenutna želena temperatura prostora četrtega kroga",
+    "kakšna je trenutna želena temperatura prostora štiri", "izklopi četrti ogrevalni krog",
+    "izklopi ogrevalni krog štiri", "nastavi delovanje četrtega ogrevalnega kroga na normalni režim",
+    "nastavi delovanje ogrevalnega kroga štiri na normalni režim",
+    "vklopi normalni režim na ogrevalnem krogu štiri", "vklopi normalni režim na četrtem ogrevalnem krogu",
+    "nastavi delovanje četrtega ogrevalnega kroga na delovanje po urniku",
+    "nastavi delovanje ogrevalnega kroga štiri na delovanje po urniku",
+    "vklopi delovanje po urniku na ogrevalnem krogu štiri",
+    "vklopi delovanje po urniku na četrtem ogrevalnem krogu", "kakšen je status delovanja četrtega ogrevalnega kroga",
+    "kakšen je status delovanja ogrevalnega kroga štiri", "kakšna je temperatura ogrevalnega kroga štiri",
+    "kakšna je temperatura četrtega ogrevalnega kroga"
+]
 
-def test_parse_slovene_number_basic():
+# Test slovenian_word_to_number_strict
+def test_parse_slovene_number_strict_basic():
     assert matcher.slovenian_word_to_number_strict("ena") == '1'
-    # Add more unit tests for parse_slovene_number
+    assert matcher.slovenian_word_to_number_strict("dvanajst") == '12'
+    assert matcher.slovenian_word_to_number_strict("dvajset") == '20'
+    assert matcher.slovenian_word_to_number_strict("petindvajset") == None # Expect None for complex words
+    assert matcher.slovenian_word_to_number_strict("25") == '25'
+    assert matcher.slovenian_word_to_number_strict("25.5") == '25.5'
+    assert matcher.slovenian_word_to_number_strict("nič") == '0'
+
+# Test slovenian_word_to_number (with typos)
+def test_parse_slovene_number_typos():
+    assert matcher.slovenian_word_to_number("dvaset") == '20' # dvajset
+    assert matcher.slovenian_word_to_number("šestnajst") == '16'
+    assert matcher.slovenian_word_to_number("trinajst") == '13'
+
+# Test replace_numbers_with_digits
+def test_replace_numbers():
+    assert matcher.replace_numbers_with_digits("nastavi temperaturo na dvajset stopinj") == "nastavi temperaturo na 20 stopinj"
+    assert matcher.replace_numbers_with_digits("nastavi na pet in dvajset stopinj") == "nastavi na 25 stopinj"
+    assert matcher.replace_numbers_with_digits("ena dva tri") == "1 2 3"
+    assert matcher.replace_numbers_with_digits("dve celi pet") == "2.5"
+
+# Test includes_temperature
+def test_includes_temperature():
+    assert matcher.includes_temperature("nastavi temperaturo na 20 stopinj") == True
+    assert matcher.includes_temperature("kakšna je temperatura?") == False
+    assert matcher.includes_temperature("segrej vodo na 50°C") == True
+    assert matcher.includes_temperature("koliko je stopinj zunaj") == True
+
+# Test match_command with perfect sentences
+def test_match_command_perfect():
+    action, param = matcher.match_command("kakšna je temperatura sanitarne vode", commands)
+    assert action == "kakšna je temperatura sanitarne vode"
+    assert param is None
+
+    action, param = matcher.match_command("nastavi temperaturo prostora ena na 22 stopinj", commands)
+    assert action == "nastavi temperaturo prostora ena na <temperature> stopinj"
+    assert param == 22.0
+
+    action, param = matcher.match_command("vklopi sistem", commands)
+    assert action == "vklopi sistem"
+    assert param is None
+
+# Test match_command with botched sentences
+def test_match_command_botched():
+    action, param = matcher.match_command("kakšna je tempertura sanitarne vode", commands)
+    assert action == "kakšna je temperatura sanitarne vode"
+    assert param is None
+
+    action, param = matcher.match_command("prosim vklopi sistem zdaj", commands)
+    assert action == "vklopi sistem"
+    assert param is None
+
+    action, param = matcher.match_command("nastavi temeraturo prostora ena na dvaindvajset stopinj", commands)
+    assert action == "nastavi temperaturo prostora ena na <temperature> stopinj"
+    assert param == 22.0
+
+    with pytest.raises(ValueError):
+         matcher.match_command("temperatura sanitarna 50 stopinj", commands)
+
+    action, param = matcher.match_command("prosim te nastavi mi temperturo za sanitarno vodo na 45 stopinj", commands)
+    assert action == "nastavi želeno temperaturo sanitarne vode na <temperature> stopinj"
+    assert param == 45.0
+
+    action, param = matcher.match_command("nastavi temperaturo prostora dva na 21.5 stopinj", commands)
+    assert action == "nastavi temperaturo prostora dva na <temperature> stopinj"
+    assert param == 21.5
+
+    action, param = matcher.match_command("nastavi temperaturo prostora dva na enaindvajset cela pet stopinj", commands)
+    assert action == "nastavi temperaturo prostora dva na <temperature> stopinj"
+    assert param == 21.5
+
+    action, param = matcher.match_command("uklopi sistem", commands)
+    assert action == "vklopi sistem"
+    assert param is None
+
+    # This test might fail if "kopalnica" isn't mapped or similarity is too low
+    # action, param = matcher.match_command("koliko je stopinj v kopalnici", commands)
+    # assert action == "kakšna je temperatura ogrevalnega kroga dva" # Assuming 'kopalnica' is loop 2
+    # assert param is None
+
+    # This test might fail if context isn't handled or similarity is too low
+    # action, param = matcher.match_command("sanitarno vodo na trideset", commands)
+    # assert action == "nastavi temperaturo sanitarne vode na <temperature> stopinj"
+    # assert param == 30.0
