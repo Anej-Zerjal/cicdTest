@@ -29,12 +29,29 @@ jobs:
 
             - name: Run matcher unit tests + coverage gate
               run: |
-                  pytest -q
+                  pytest -v
+    # ───────────────────────── target machine tests ──────────────────────────
+    target_machine_tests:
+        runs-on: [self-hosted, Linux, ARM]
+        needs: matcher_unit_tests
 
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Sync integration to HAOS
+              run: |
+                  rsync -az src/kronoterm_voice_actions/ \
+                        haos:/config/custom_components/
+
+            - name: Run integration tests
+              run: |
+                  ssh haos "cd /config/custom_components/test && pytest -v"
+
+    # ──────────────────────── deploy ─────────────────────────
     deploy:
         if: github.ref == 'refs/heads/main'
         runs-on: [self-hosted, Linux, ARM]
-        needs: matcher_unit_tests
+        needs: target_machine_tests
 
         steps:
             - uses: actions/checkout@v4
