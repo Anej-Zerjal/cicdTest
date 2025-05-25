@@ -1,4 +1,4 @@
-# src/kronoterm_voice_actions/test/test_matcher.py
+# src/kronoterm_voice_actions/test_local/test_matcher.py
 
 # Import relative to the package structure
 from ..wyoming import matcher
