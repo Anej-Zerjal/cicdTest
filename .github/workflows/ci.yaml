@@ -43,9 +43,7 @@ jobs:
                   rsync -az src/kronoterm_voice_actions/ \
                         haos:/config/custom_components/
 
-            - name: Install Dependencies
-              run: |
-                  ssh haos "pip install pytest"
+            #pytest must be already installed
 
             - name: Run integration tests
               run: |
