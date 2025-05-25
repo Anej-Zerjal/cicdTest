@@ -50,7 +50,7 @@ jobs:
             - name: Install dependencies on target
               run: |
                   # SSH into haos and install any necessary dependencies for the tests
-                  ssh haos "pip install homeassistant==${HA_VERSION} pytest"
+                  ssh haos "pip install pytest"
 
             - name: Run tests on target machine
               run: |

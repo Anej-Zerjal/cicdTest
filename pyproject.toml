@@ -23,7 +23,7 @@ packages    = ["kronoterm_voice_actions"]
 [project.optional-dependencies]
 dev  = ["ruff", "black", "pre-commit"]
 test = [
-    "pytest>=8.1",
+    "pytest",
     "pytest-asyncio>=0.23",
     "pytest-homeassistant-custom-component",
     "coverage"
