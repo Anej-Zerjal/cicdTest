@@ -241,17 +241,14 @@ def match_command(text: str, commands: list[str]) -> tuple[str, float | None]:
         if temperature is None:
             return "", None
 
-        text = text.replace(temperature, "")
+        text = text.replace(temperature, "<temperature>")
 
-    prepared_commands = []
-    for command in commands:
-        command = command.replace("<temperature>", "")
-        prepared_commands.append(command.strip())
 
-    match = difflib.get_close_matches(text, prepared_commands, n=1, cutoff=0.65)
+    match = difflib.get_close_matches(text, commands, n=1, cutoff=0.65)
     if not match:
         return "", None
 
+    match = match
     if temperature is None:
         return match[0], None
 
