@@ -38,7 +38,7 @@ jobs:
   # ──────────────────────── deploy ─────────────────────────
   deploy:
     if: github.ref == 'refs/heads/main'    # deploy **only** from main
-    runs-on: [self-hosted, macOS, ARM64]            # your Mac (or any LAN runner)
+    runs-on: [self-hosted, Linux, ARM]
 
     steps:
       - uses: actions/checkout@v4          # checkout same commit being deployed
