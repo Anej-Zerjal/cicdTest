@@ -51,10 +51,21 @@ jobs:
             - name: Run integration tests on HAOS
               run: |
                   ssh haos << 'EOF'
-                  login
-                    cd ${{ env.HAOS_PROJECT_WORKSPACE }}
-                    pwd
-                    pytest -v src/kronoterm_voice_actions/test/
+                      # 1) Drop from the locked-down HA CLI into the host OS shell
+                      login
+
+                      # 2) Go to your workspace
+                      cd ${{ env.HAOS_PROJECT_WORKSPACE }}
+
+                      # 3) Fire up a Python container, mount in your code and run pytest
+                      docker run --rm \
+                      -v "$(pwd)":/work -w /work \
+                      python:3.13-slim \
+                      bash -eux << 'SCRIPT'
+                          pip install --upgrade pip
+                          pip install -e ".[test]" "homeassistant==${{ env.HA_VERSION }}"
+                          pytest -v src/kronoterm_voice_actions/test_local/
+                      SCRIPT
                   EOF
 
     # ──────────────────────── deploy ─────────────────────────
