@@ -25,7 +25,7 @@ jobs:
             - name: Install deps
               run: |
                   python -m pip install -U pip
-                  pip install ".[test]" "homeassistant==${HA_VERSION}"
+                  pip install ".[test]" "homeassistant"
 
             - name: Run unit tests + coverage gate
               run: |
