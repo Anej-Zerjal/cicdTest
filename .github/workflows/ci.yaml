@@ -27,9 +27,9 @@ jobs:
                   python -m pip install -U pip
                   pip install ".[test]" "homeassistant==${HA_VERSION}"
 
-            # - name: Run matcher unit tests + coverage gate
-            #   run: |
-            #       pytest -v
+            - name: Run matcher unit tests + coverage gate
+              run: |
+                  pytest -v
     # ───────────────────────── target machine tests ──────────────────────────
     target_machine_tests:
         runs-on: [self-hosted, Linux, ARM]
@@ -40,18 +40,18 @@ jobs:
 
             - name: Sync integration to HAOS
               run: |
-                  rsync -az src/kronoterm_voice_actions/ \
-                        haos:/config/custom_components/
+                  rsync -az src/ \
+                        haos:/testing/
 
             - name: Run integration tests
               run: |
-                  ssh haos "cd config/ && pwd && pytest -v"
+                  ssh haos "cd testing/ && tree"
 
     # ──────────────────────── deploy ─────────────────────────
     deploy:
         if: github.ref == 'refs/heads/main'
         runs-on: [self-hosted, Linux, ARM]
-        needs: target_machine_tests
+        needs: matcher_unit_tests
 
         steps:
             - uses: actions/checkout@v4
