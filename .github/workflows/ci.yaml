@@ -43,11 +43,9 @@ jobs:
                   rsync -az src/kronoterm_voice_actions/ \
                         haos:/config/custom_components/
 
-            #pytest must be installed on the target machine
-
             - name: Run integration tests
               run: |
-                  ssh haos "cd /config/custom_components/test_local && pytest -v"
+                  ssh haos "cd /config/custom_components/test_local && python3 runner.py"
 
     # ──────────────────────── deploy ─────────────────────────
     deploy:
