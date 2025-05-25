@@ -63,9 +63,9 @@ jobs:
                     # Install pytest, homeassistant, and your integration within the venv
                     # Use --no-deps for homeassistant if you just need the test environment
                     pip install --upgrade pip
-                    pip install homeassistant pytest
+                    pip install pytest
                     # Install your integration from the synced source code
-                    pip install "\$TEST_DIR/kronoterm_voice_actions/"
+                    pip install "\$TEST_DIR/"
 
                     # Change directory to the test directory
                     cd "\$TEST_DIR"
