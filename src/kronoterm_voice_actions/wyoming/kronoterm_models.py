@@ -13,6 +13,9 @@ class KronotermAction:
 class RegisterAddress(Enum):
     """Modbus register addresses"""
 
+    def to_int(self) -> int:
+        return self.value
+
     SYSTEM_STATUS                        = 2000  # Delovanje sistema
     OPERATING_MODE                       = 2001  # Funkcija delovanja
     ADDITIONAL_ENGAGERS                  = 2002  # Dodatni vklopi

@@ -62,7 +62,7 @@ class MqttClient:
         self.modbus_client.connect()
         rr = await asyncio.to_thread(
             self.modbus_client.read_holding_registers,
-            addr.value() - 1,
+            addr.to_int() - 1,
             count=1,
             slave=MODBUS_SLAVE_ID
         )
@@ -78,7 +78,7 @@ class MqttClient:
         self.modbus_client.connect()
         await asyncio.to_thread(
             self.modbus_client.write_register,
-            addr.value() - 1,
+            addr.to_int() - 1,
             value=raw,
             slave=MODBUS_SLAVE_ID
         )
