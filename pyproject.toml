@@ -7,7 +7,7 @@ name            = "kronoterm_voice_actions"
 version         = "0.0.0"
 description     = "Home Assistant custom integration for Kronoterm voice actions"
 readme          = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.13"
 dependencies    = [
     "wyoming==1.5.4",
     "rapidfuzz",

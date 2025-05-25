@@ -5,7 +5,7 @@ on:
     pull_request:
 
 env:
-    HA_VERSION: "0.42.4"
+    HA_VERSION: "2025.5.3"
 
 jobs:
     # ───────────────────────── matcher tests ──────────────────────────
@@ -13,7 +13,7 @@ jobs:
         runs-on: ubuntu-latest
         strategy:
             matrix:
-                python: ["3.11"]
+                python: ["3.13"]
 
         steps:
             - uses: actions/checkout@v4
@@ -25,7 +25,7 @@ jobs:
             - name: Install deps
               run: |
                   python -m pip install -U pip
-                  pip install ".[test]" "homeassistant"
+                  pip install ".[test]" "homeassistant==${HA_VERSION}"
 
             - name: Run matcher unit tests + coverage gate
               run: |
@@ -81,7 +81,7 @@ jobs:
     deploy:
         if: github.ref == 'refs/heads/main'
         runs-on: [self-hosted, Linux, ARM]
-        needs: target_machine_tests # Ensure target machine tests pass before deploying
+        needs: target_machine_tests
 
         steps:
             - uses: actions/checkout@v4
