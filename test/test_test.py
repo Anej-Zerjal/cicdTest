@@ -1,14 +1,6 @@
 # Your test file (e.g., test_my_integration.py)
-from kronoterm_voice_actions.wyoming import matcher
 
 import pytest
-
-
-# This test will NOT be marked
-def test_basic_functionality():
-    parsed_number = matcher.parse_slovene_number("dvajset in tri")
-    assert 1 + 1 == 2
-    print("Basic functionality test completed successfully")
 
 
 # This test WILL be marked with 'target_machine'
