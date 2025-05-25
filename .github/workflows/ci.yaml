@@ -45,7 +45,7 @@ jobs:
               run: |
                   # Sync the whole project for easier installation
                   rsync -az ./ \
-                        haos:testing/
+                        haos:/testing/
 
             - name: Run integration tests on HAOS
               run: |
@@ -53,10 +53,10 @@ jobs:
                         echo "--- Running tests on HAOS ---"
                         cd /testing/
 
-                        # --- Option 1: Assuming Python/pip exist ---
-                        # python3.13 -m pip install -U pip
-                        # python3.13 -m pip install -e ".[test]"
-                        # python3.13 -m pytest -v src/kronoterm_voice_actions/test_local/
+                        --- Option 1: Assuming Python/pip exist ---
+                        python3.13 -m pip install -U pip
+                        python3.13 -m pip install -e ".[test]"
+                        python3.13 -m pytest -v src/kronoterm_voice_actions/test_local/
 
                         # --- Option 2: Using Docker (if available) ---
                         # docker run --rm -v \$(pwd):/work -w /work python:3.13-slim bash -c "
