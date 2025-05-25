@@ -6,6 +6,7 @@ on:
 
 env:
     HA_VERSION: "2025.5.3"
+    HAOS_PROJECT_WORKSPACE: /tmp/kronoterm_voice_actions_ci_workspace
 
 jobs:
     # # ───────────────────────── Unit tests (GitHub Runner) ──────────────────────────
@@ -45,13 +46,13 @@ jobs:
               run: |
                   # Sync the whole project for easier installation
                   rsync -az ./ \
-                        haos:/testing/
+                        haos:${{ env.HAOS_PROJECT_WORKSPACE }}/
 
             - name: Run integration tests on HAOS
               run: |
                   ssh haos << EOF
                         echo "--- Running tests on HAOS ---"
-                        cd /testing/
+                        cd ${{ env.HAOS_PROJECT_WORKSPACE }}
 
                         docker run --rm -v \$(pwd):/work -w /work python:3.13-slim bash -c "
                           pip install -e .[test] &&
