@@ -49,7 +49,7 @@ jobs:
 
             - name: Run integration tests
               run: |
-                  ssh haos "cd /config/custom_components/test && pytest -v"
+                  ssh haos "cd /config/custom_components/test_local && pytest -v"
 
     # ──────────────────────── deploy ─────────────────────────
     deploy:
