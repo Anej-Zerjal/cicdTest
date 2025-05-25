@@ -30,7 +30,7 @@ jobs:
             - name: Run unit tests + coverage gate
               run: |
                   pytest -q \
-                    -m "not target_machine" \  # Exclude tests marked with 'target_machine'
+                    -m "not target_machine" \
                     --cov=kronoterm_voice_actions \
                     --cov-report=xml \
                     --cov-fail-under=85
