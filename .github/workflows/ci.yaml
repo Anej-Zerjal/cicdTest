@@ -63,7 +63,7 @@ jobs:
                     # Install pytest, homeassistant, and your integration within the venv
                     # Use --no-deps for homeassistant if you just need the test environment
                     pip install --upgrade pip
-                    pip install pytest
+                    pip install pytest homeassistant==2025.1.4
                     # Install your integration from the synced source code
                     pip install "\$TEST_DIR/"
 
