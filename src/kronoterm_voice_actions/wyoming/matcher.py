@@ -261,8 +261,8 @@ def match_command(text: str, commands: list[str]) -> tuple[str, float | None]:
             return "", None
 
         text = text.replace(temperature, "<temperature>")
-        text = insert_numbers_back(text)
 
+    text = insert_numbers_back(text)
     match = difflib.get_close_matches(text, commands, n=1, cutoff=0.65)
     if not match:
         return "", None
