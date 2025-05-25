@@ -41,10 +41,6 @@ jobs:
         steps:
             - uses: actions/checkout@v4
 
-            # Optional: Add haos to known_hosts to avoid prompts
-            - name: Add HAOS to known_hosts
-              run: ssh-keyscan -H haos >> ~/.ssh/known_hosts
-
             - name: Sync integration to HAOS
               run: |
                   # Sync the whole project for easier installation
