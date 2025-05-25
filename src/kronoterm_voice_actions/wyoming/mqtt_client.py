@@ -572,7 +572,6 @@ class MqttClient:
 
         "nastavi normalen režim": set_regime_normal,
         "nastavi režim na normalen način": set_regime_normal,
-        "nastavi režim na normalen": set_regime_normal,
         "vklopi normalen režim": set_regime_normal,
 
         "nastavi eco režim": set_regime_eco,
@@ -581,7 +580,6 @@ class MqttClient:
 
         "nastavi com režim": set_regime_com,
         "nastavi režim na com način": set_regime_com,
-        "nastavi režim na com": set_regime_com,
         "vklopi com režim": set_regime_com,
 
         "vklopi hitro segrevanje sanitarne vode": enable_dhw_quick_heating,

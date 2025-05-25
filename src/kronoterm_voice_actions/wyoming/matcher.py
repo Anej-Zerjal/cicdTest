@@ -253,10 +253,17 @@ def insert_numbers_back(text: str) -> str:
 
     return ' '.join(words)
 
+def sanitize_text(text: str) -> str:
+    text = text.replace("°C", "")
+    if text.endswith("."):
+        text = text[:-1]
+
+    return text
 
 def match_command(text: str, commands: list[str]) -> tuple[str, float | None]:
     temperature = None
     if includes_temperature(text):
+        text = sanitize_text(text)
         text = replace_numbers_with_digits(text)
         temperature = find_last_number(text)
         if temperature is None:
