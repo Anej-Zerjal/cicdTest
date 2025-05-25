@@ -77,20 +77,20 @@ commands = [
 
 # Test slovenian_word_to_number_strict
 def test_parse_slovene_number_strict_basic():
-    assert float(matcher.slovenian_word_to_number_strict("ena")) == '1.0'
-    assert float(matcher.slovenian_word_to_number_strict("dvanajst")) == '12.0'
-    assert float(matcher.slovenian_word_to_number_strict("dvajset")) == '20.0'
-    assert float(matcher.slovenian_word_to_number_strict("petindvajset")) == '25.0'
-    assert float(matcher.slovenian_word_to_number_strict("25")) == '25.0'
-    assert float(matcher.slovenian_word_to_number_strict("25.5")) == '25.5'
-    assert float(matcher.slovenian_word_to_number_strict("nič")) == '0.0'
+    assert (matcher.slovenian_word_to_number_strict("ena")) == '1.0'
+    assert (matcher.slovenian_word_to_number_strict("dvanajst")) == '12.0'
+    assert (matcher.slovenian_word_to_number_strict("dvajset")) == '20.0'
+    assert (matcher.slovenian_word_to_number_strict("petindvajset")) == '25.0'
+    assert (matcher.slovenian_word_to_number_strict("25")) == '25.0'
+    assert (matcher.slovenian_word_to_number_strict("25.5")) == '25.5'
+    assert (matcher.slovenian_word_to_number_strict("nič")) == '0.0'
     assert matcher.slovenian_word_to_number_strict("mačipiču") is None
 
 # Test slovenian_word_to_number (with typos)
 def test_parse_slovene_number_typos():
-    assert float(matcher.slovenian_word_to_number("dvaset")) == '20.0'
-    assert float(matcher.slovenian_word_to_number("šestnajst")) == '16.0'
-    assert float(matcher.slovenian_word_to_number("trinajst")) == '13.0'
+    assert (matcher.slovenian_word_to_number("dvaset")) == '20.0'
+    assert (matcher.slovenian_word_to_number("šestnajst")) == '16.0'
+    assert (matcher.slovenian_word_to_number("trinajst")) == '13.0'
 
 # Test replace_numbers_with_digits
 def test_replace_numbers():
