@@ -534,195 +534,194 @@ class MqttClient:
 
 
     map_template_to_function = {
-        "Ali je sistem vklopljen": get_system_status,
-        "Ali je sistem izklopljen": get_system_status,
-        "Kakšno je stanje sistema": get_system_status,
+        "ali je sistem vklopljen": get_system_status,
+        "ali je sistem izklopljen": get_system_status,
+        "kakšno je stanje sistema": get_system_status,
 
-        "Kakšna funkcija se izvaja": get_operating_mode,
-        "Kakšna funkcija delovanja se izvaja": get_operating_mode,
+        "kakšna funkcija se izvaja": get_operating_mode,
+        "kakšna funkcija delovanja se izvaja": get_operating_mode,
 
-        "Ali je rezervni vir vklopljen": get_reserve_source_status,
-        "Ali je rezervni vir izklopljen": get_reserve_source_status,
-        "Kakšen je status rezervnega vira": get_reserve_source_status,
+        "ali je rezervni vir vklopljen": get_reserve_source_status,
+        "ali je rezervni vir izklopljen": get_reserve_source_status,
+        "kakšen je status rezervnega vira": get_reserve_source_status,
 
-        "Ali je alternativni vir vklopljen": get_alternative_source_status,
-        "Ali je alternativni vir izklopljen": get_alternative_source_status,
-        "Kakšen je status alternativnega vira": get_alternative_source_status,
+        "ali je alternativni vir vklopljen": get_alternative_source_status,
+        "ali je alternativni vir izklopljen": get_alternative_source_status,
+        "kakšen je status alternativnega vira": get_alternative_source_status,
 
-        "Kakšen je trenuten režim delovanja": get_operation_regime_status,
-        "Kakšen je režim delovanja": get_operation_regime_status,
+        "kakšen je trenuten režim delovanja": get_operation_regime_status,
+        "kakšen je režim delovanja": get_operation_regime_status,
 
-        "Kakšen je trenuten program": get_program_mode,
-        "Kakšen je program delovanja": get_program_mode,
+        "kakšen je trenuten program": get_program_mode,
+        "kakšen je program delovanja": get_program_mode,
 
-        "Kakšen je status hitrega segrevanja sanitarne vode": get_dhw_quick_heat_status,
-        "Ali je hitro segrevanje sanitarne vode vklopljeno": get_dhw_quick_heat_status,
-        "Ali je hitro segrevanje sanitarne vode izklopljeno": get_dhw_quick_heat_status,
+        "kakšen je status hitrega segrevanja sanitarne vode": get_dhw_quick_heat_status,
+        "ali je hitro segrevanje sanitarne vode vklopljeno": get_dhw_quick_heat_status,
+        "ali je hitro segrevanje sanitarne vode izklopljeno": get_dhw_quick_heat_status,
 
-        "Kakšen je status odtaljevanja": get_defrost_mode_status,
-        "Ali je odtaljevanje vklopljeno": get_defrost_mode_status,
-        "Ali je odtaljevanje izklopljeno": get_defrost_mode_status,
-        "Ali se odtaljevanje izvaja": get_defrost_mode_status,
+        "kakšen je status odtaljevanja": get_defrost_mode_status,
+        "ali je odtaljevanje vklopljeno": get_defrost_mode_status,
+        "ali je odtaljevanje izklopljeno": get_defrost_mode_status,
+        "ali se odtaljevanje izvaja": get_defrost_mode_status,
 
-        "Vklopi sistem": turn_system_on,
-        "Vklopi toplotno črpalko in ogrevalne kroge": turn_system_on,
+        "vklopi sistem": turn_system_on,
+        "vklopi toplotno črpalko in ogrevalne kroge": turn_system_on,
 
-        "Izklopi sistem": turn_system_off,
-        "Izklopi toplotno črpalko in ogrevalne kroge": turn_system_off,
+        "izklopi sistem": turn_system_off,
+        "izklopi toplotno črpalko in ogrevalne kroge": turn_system_off,
 
-        "Nastavi normalen režim": set_regime_normal,
-        "Nastavi režim na normalen način": set_regime_normal,
-        "Nastavi režim na normalen": set_regime_normal,
-        "Vklopi normalen režim": set_regime_normal,
+        "nastavi normalen režim": set_regime_normal,
+        "nastavi režim na normalen način": set_regime_normal,
+        "nastavi režim na normalen": set_regime_normal,
+        "vklopi normalen režim": set_regime_normal,
 
-        "Nastavi ECO režim": set_regime_eco,
-        "Nastavi režim na ECO način": set_regime_eco,
-        "Nastavi režim na ECO": set_regime_eco,
-        "Vklopi ECO režim": set_regime_eco,
+        "nastavi eco režim": set_regime_eco,
+        "nastavi režim na eco način": set_regime_eco,
+        "vklopi eco režim": set_regime_eco,
 
-        "Nastavi COM režim": set_regime_com,
-        "Nastavi režim na COM način": set_regime_com,
-        "Nastavi režim na COM": set_regime_com,
-        "Vklopi COM režim": set_regime_com,
+        "nastavi com režim": set_regime_com,
+        "nastavi režim na com način": set_regime_com,
+        "nastavi režim na com": set_regime_com,
+        "vklopi com režim": set_regime_com,
 
-        "Vklopi hitro segrevanje sanitarne vode": enable_dhw_quick_heating,
+        "vklopi hitro segrevanje sanitarne vode": enable_dhw_quick_heating,
 
-        "Izklopi hitro segrevanje sanitarne vode": disable_dhw_quick_heating,
+        "izklopi hitro segrevanje sanitarne vode": disable_dhw_quick_heating,
 
-        "Kakšna je trenutna obremenitev toplotne črpalke": get_heatpump_load,
+        "kakšna je trenutna obremenitev toplotne črpalke": get_heatpump_load,
 
-        "Nastavi želeno temperaturo sanitarne vode na <temperature> stopinj": set_dhw_target_temperature,
-        "Nastavi temperaturo sanitarne vode na <temperature> stopinj": set_dhw_target_temperature,
-        "Segrej sanitarno vodo na <temperature> stopinj": set_dhw_target_temperature,
+        "nastavi želeno temperaturo sanitarne vode na <temperature> stopinj": set_dhw_target_temperature,
+        "nastavi temperaturo sanitarne vode na <temperature> stopinj": set_dhw_target_temperature,
+        "segrej sanitarno vodo na <temperature> stopinj": set_dhw_target_temperature,
 
-        "Kakšna je trenutna želena temperatura sanitarne vode": get_dhw_target_temperature,
+        "kakšna je trenutna želena temperatura sanitarne vode": get_dhw_target_temperature,
 
-        "Izklopi segrevanje sanitarne vode": set_dhw_mode_disabled,
+        "izklopi segrevanje sanitarne vode": set_dhw_mode_disabled,
 
-        "Nastavi normalen režim sanitarne vode": set_dhw_mode_normal,
-        "Nastavi režim sanitarne vode na normalno": set_dhw_mode_normal,
-        "Vklopi normalen režim segrevanja sanitarne vode": set_dhw_mode_normal,
+        "nastavi normalen režim sanitarne vode": set_dhw_mode_normal,
+        "nastavi režim sanitarne vode na normalno": set_dhw_mode_normal,
+        "vklopi normalen režim segrevanja sanitarne vode": set_dhw_mode_normal,
 
-        "Nastavi režim sanitarne vode po urniku": set_dhw_mode_schedule,
-        "Vklopi režim segrevanja sanitarne vode po urniku": set_dhw_mode_schedule,
+        "nastavi režim sanitarne vode po urniku": set_dhw_mode_schedule,
+        "vklopi režim segrevanja sanitarne vode po urniku": set_dhw_mode_schedule,
 
-        "Kakšen je trenuten način delovanja sanitarne vode po urniku": get_dhw_schedule_mode,
+        "kakšen je trenuten način delovanja sanitarne vode po urniku": get_dhw_schedule_mode,
 
-        "Kakšna je temperatura sanitarne vode": get_dhw_temperature,
+        "kakšna je temperatura sanitarne vode": get_dhw_temperature,
 
         ####################################################################################################################
         # LOOP 1
         ####################################################################################################################
 
-        "Nastavi temperaturo prostora ena na <temperature> stopinj": set_loop1_room_target_temp,
-        "Nastavi želeno temperaturo prostora prvega kroga na <temperature> stopinj": set_loop1_room_target_temp,
+        "nastavi temperaturo prostora ena na <temperature> stopinj": set_loop1_room_target_temp,
+        "nastavi želeno temperaturo prostora prvega kroga na <temperature> stopinj": set_loop1_room_target_temp,
 
-        "Kakšna je trenutna želena temperatura prostora prvega kroga": get_loop1_room_target_temp,
-        "Kakšna je trenutna želena temperatura prostora ena": get_loop1_room_target_temp,
+        "kakšna je trenutna želena temperatura prostora prvega kroga": get_loop1_room_target_temp,
+        "kakšna je trenutna želena temperatura prostora ena": get_loop1_room_target_temp,
 
-        "Izklopi prvi ogrevalni krog": set_loop1_operating_mode_disabled,
-        "Izklopi ogrevalni krog ena": set_loop1_operating_mode_disabled,
+        "izklopi prvi ogrevalni krog": set_loop1_operating_mode_disabled,
+        "izklopi ogrevalni krog ena": set_loop1_operating_mode_disabled,
 
-        "Nastavi delovanje prvega ogrevalnega kroga na normalni režim": set_loop1_operating_mode_normal,
-        "Nastavi delovanje ogrevalnega kroga ena na normalni režim": set_loop1_operating_mode_normal,
-        "Vklopi normalni režim na ogrevalnem krogu ena": set_loop1_operating_mode_normal,
-        "Vklopi normalni režim na prvem ogrevalnem krogu": set_loop1_operating_mode_normal,
+        "nastavi delovanje prvega ogrevalnega kroga na normalni režim": set_loop1_operating_mode_normal,
+        "nastavi delovanje ogrevalnega kroga ena na normalni režim": set_loop1_operating_mode_normal,
+        "vklopi normalni režim na ogrevalnem krogu ena": set_loop1_operating_mode_normal,
+        "vklopi normalni režim na prvem ogrevalnem krogu": set_loop1_operating_mode_normal,
 
-        "Nastavi delovanje prvega ogrevalnega kroga na delovanje po urniku": set_loop1_operating_mode_schedule,
-        "Nastavi delovanje ogrevalnega kroga ena na delovanje po urniku": set_loop1_operating_mode_schedule,
-        "Vklopi delovanje po urniku na ogrevalnem krogu ena": set_loop1_operating_mode_schedule,
-        "Vklopi delovanje po urniku na prvem ogrevalnem krogu": set_loop1_operating_mode_schedule,
+        "nastavi delovanje prvega ogrevalnega kroga na delovanje po urniku": set_loop1_operating_mode_schedule,
+        "nastavi delovanje ogrevalnega kroga ena na delovanje po urniku": set_loop1_operating_mode_schedule,
+        "vklopi delovanje po urniku na ogrevalnem krogu ena": set_loop1_operating_mode_schedule,
+        "vklopi delovanje po urniku na prvem ogrevalnem krogu": set_loop1_operating_mode_schedule,
 
-        "Kašen je status delovanja prvega ogrevalnega kroga": get_loop1_operating_mode,
-        "Kašen je status delovanja ogrevalnega kroga ena": get_loop1_operating_mode,
+        "kakšen je status delovanja prvega ogrevalnega kroga": get_loop1_operating_mode,
+        "kakšen je status delovanja ogrevalnega kroga ena": get_loop1_operating_mode,
 
-        "Kakšna je temperatura ogrevalnega kroga ena": get_loop1_temp,
-        "Kakšna je temperatura prvega ogrevalnega kroga": get_loop1_temp,
+        "kakšna je temperatura ogrevalnega kroga ena": get_loop1_temp,
+        "kakšna je temperatura prvega ogrevalnega kroga": get_loop1_temp,
 
         ####################################################################################################################
         # LOOP 2
         ####################################################################################################################
 
-        "Nastavi temperaturo prostora dva na <temperature> stopinj": set_loop2_room_target_temp,
-        "Nastavi želeno temperaturo prostora drugega kroga na <temperature> stopinj": set_loop2_room_target_temp,
+        "nastavi temperaturo prostora dva na <temperature> stopinj": set_loop2_room_target_temp,
+        "nastavi želeno temperaturo prostora drugega kroga na <temperature> stopinj": set_loop2_room_target_temp,
 
-        "Kakšna je trenutna želena temperatura prostora drugega kroga": get_loop2_room_target_temp,
-        "Kakšna je trenutna želena temperatura prostora dva": get_loop2_room_target_temp,
+        "kakšna je trenutna želena temperatura prostora drugega kroga": get_loop2_room_target_temp,
+        "kakšna je trenutna želena temperatura prostora dva": get_loop2_room_target_temp,
 
-        "Izklopi drugi ogrevalni krog": set_loop2_operating_mode_disabled,
-        "Izklopi ogrevalni krog dva": set_loop2_operating_mode_disabled,
+        "izklopi drugi ogrevalni krog": set_loop2_operating_mode_disabled,
+        "izklopi ogrevalni krog dva": set_loop2_operating_mode_disabled,
 
-        "Nastavi delovanje drugega ogrevalnega kroga na normalni režim": set_loop2_operating_mode_normal,
-        "Nastavi delovanje ogrevalnega kroga dva na normalni režim": set_loop2_operating_mode_normal,
-        "Vklopi normalni režim na ogrevalnem krogu dva": set_loop2_operating_mode_normal,
-        "Vklopi normalni režim na drugem ogrevalnem krogu": set_loop2_operating_mode_normal,
+        "nastavi delovanje drugega ogrevalnega kroga na normalni režim": set_loop2_operating_mode_normal,
+        "nastavi delovanje ogrevalnega kroga dva na normalni režim": set_loop2_operating_mode_normal,
+        "vklopi normalni režim na ogrevalnem krogu dva": set_loop2_operating_mode_normal,
+        "vklopi normalni režim na drugem ogrevalnem krogu": set_loop2_operating_mode_normal,
 
-        "Nastavi delovanje drugega ogrevalnega kroga na delovanje po urniku": set_loop2_operating_mode_schedule,
-        "Nastavi delovanje ogrevalnega kroga dva na delovanje po urniku": set_loop2_operating_mode_schedule,
-        "Vklopi delovanje po urniku na ogrevalnem krogu dva": set_loop2_operating_mode_schedule,
-        "Vklopi delovanje po urniku na drugem ogrevalnem krogu": set_loop2_operating_mode_schedule,
+        "nastavi delovanje drugega ogrevalnega kroga na delovanje po urniku": set_loop2_operating_mode_schedule,
+        "nastavi delovanje ogrevalnega kroga dva na delovanje po urniku": set_loop2_operating_mode_schedule,
+        "vklopi delovanje po urniku na ogrevalnem krogu dva": set_loop2_operating_mode_schedule,
+        "vklopi delovanje po urniku na drugem ogrevalnem krogu": set_loop2_operating_mode_schedule,
 
-        "Kašen je status delovanja drugega ogrevalnega kroga": get_loop2_operating_mode,
-        "Kašen je status delovanja ogrevalnega kroga dva": get_loop2_operating_mode,
+        "kakšen je status delovanja drugega ogrevalnega kroga": get_loop2_operating_mode,
+        "kakšen je status delovanja ogrevalnega kroga dva": get_loop2_operating_mode,
 
-        "Kakšna je temperatura ogrevalnega kroga dva": get_loop2_temp,
-        "Kakšna je temperatura drugega ogrevalnega kroga": get_loop2_temp,
+        "kakšna je temperatura ogrevalnega kroga dva": get_loop2_temp,
+        "kakšna je temperatura drugega ogrevalnega kroga": get_loop2_temp,
 
         ####################################################################################################################
         # LOOP 3
         ####################################################################################################################
 
-        "Nastavi temperaturo prostora tri na <temperature> stopinj": set_loop3_room_target_temp,
-        "Nastavi želeno temperaturo prostora tretjega kroga na <temperature> stopinj": set_loop3_room_target_temp,
+        "nastavi temperaturo prostora tri na <temperature> stopinj": set_loop3_room_target_temp,
+        "nastavi želeno temperaturo prostora tretjega kroga na <temperature> stopinj": set_loop3_room_target_temp,
 
-        "Kakšna je trenutna želena temperatura prostora tretjega kroga": get_loop3_room_target_temp,
-        "Kakšna je trenutna želena temperatura prostora tri": get_loop3_room_target_temp,
+        "kakšna je trenutna želena temperatura prostora tretjega kroga": get_loop3_room_target_temp,
+        "kakšna je trenutna želena temperatura prostora tri": get_loop3_room_target_temp,
 
-        "Izklopi tretji ogrevalni krog": set_loop3_operating_mode_disabled,
-        "Izklopi ogrevalni krog tri": set_loop3_operating_mode_disabled,
+        "izklopi tretji ogrevalni krog": set_loop3_operating_mode_disabled,
+        "izklopi ogrevalni krog tri": set_loop3_operating_mode_disabled,
 
-        "Nastavi delovanje tretjega ogrevalnega kroga na normalni režim": set_loop3_operating_mode_normal,
-        "Nastavi delovanje ogrevalnega kroga tri na normalni režim": set_loop3_operating_mode_normal,
-        "Vklopi normalni režim na ogrevalnem krogu tri": set_loop3_operating_mode_normal,
-        "Vklopi normalni režim na tretjem ogrevalnem krogu": set_loop3_operating_mode_normal,
+        "nastavi delovanje tretjega ogrevalnega kroga na normalni režim": set_loop3_operating_mode_normal,
+        "nastavi delovanje ogrevalnega kroga tri na normalni režim": set_loop3_operating_mode_normal,
+        "vklopi normalni režim na ogrevalnem krogu tri": set_loop3_operating_mode_normal,
+        "vklopi normalni režim na tretjem ogrevalnem krogu": set_loop3_operating_mode_normal,
 
-        "Nastavi delovanje tretjega ogrevalnega kroga na delovanje po urniku": set_loop3_operating_mode_schedule,
-        "Nastavi delovanje ogrevalnega kroga tri na delovanje po urniku": set_loop3_operating_mode_schedule,
-        "Vklopi delovanje po urniku na ogrevalnem krogu tri": set_loop3_operating_mode_schedule,
-        "Vklopi delovanje po urniku na tretjem ogrevalnem krogu": set_loop3_operating_mode_schedule,
+        "nastavi delovanje tretjega ogrevalnega kroga na delovanje po urniku": set_loop3_operating_mode_schedule,
+        "nastavi delovanje ogrevalnega kroga tri na delovanje po urniku": set_loop3_operating_mode_schedule,
+        "vklopi delovanje po urniku na ogrevalnem krogu tri": set_loop3_operating_mode_schedule,
+        "vklopi delovanje po urniku na tretjem ogrevalnem krogu": set_loop3_operating_mode_schedule,
 
-        "Kašen je status delovanja tretjega ogrevalnega kroga": get_loop3_operating_mode,
-        "Kašen je status delovanja ogrevalnega kroga tri": get_loop3_operating_mode,
+        "kakšen je status delovanja tretjega ogrevalnega kroga": get_loop3_operating_mode,
+        "kakšen je status delovanja ogrevalnega kroga tri": get_loop3_operating_mode,
 
-        "Kakšna je temperatura ogrevalnega kroga tri": get_loop3_temp,
-        "Kakšna je temperatura tretjega ogrevalnega kroga": get_loop3_temp,
+        "kakšna je temperatura ogrevalnega kroga tri": get_loop3_temp,
+        "kakšna je temperatura tretjega ogrevalnega kroga": get_loop3_temp,
 
         ####################################################################################################################
         # LOOP 4
         ####################################################################################################################
 
-        "Nastavi temperaturo prostora štiri na <temperature> stopinj": set_loop4_room_target_temp,
-        "Nastavi želeno temperaturo prostora četrtega kroga na <temperature> stopinj": set_loop4_room_target_temp,
+        "nastavi temperaturo prostora štiri na <temperature> stopinj": set_loop4_room_target_temp,
+        "nastavi želeno temperaturo prostora četrtega kroga na <temperature> stopinj": set_loop4_room_target_temp,
 
-        "Kakšna je trenutna želena temperatura prostora četrtega kroga": get_loop4_room_target_temp,
-        "Kakšna je trenutna želena temperatura prostora štiri": get_loop4_room_target_temp,
+        "kakšna je trenutna želena temperatura prostora četrtega kroga": get_loop4_room_target_temp,
+        "kakšna je trenutna želena temperatura prostora štiri": get_loop4_room_target_temp,
 
-        "Izklopi četrti ogrevalni krog": set_loop4_operating_mode_disabled,
-        "Izklopi ogrevalni krog štiri": set_loop4_operating_mode_disabled,
+        "izklopi četrti ogrevalni krog": set_loop4_operating_mode_disabled,
+        "izklopi ogrevalni krog štiri": set_loop4_operating_mode_disabled,
 
-        "Nastavi delovanje četrtega ogrevalnega kroga na normalni režim": set_loop4_operating_mode_normal,
-        "Nastavi delovanje ogrevalnega kroga štiri na normalni režim": set_loop4_operating_mode_normal,
-        "Vklopi normalni režim na ogrevalnem krogu štiri": set_loop4_operating_mode_normal,
-        "Vklopi normalni režim na četrtem ogrevalnem krogu": set_loop4_operating_mode_normal,
+        "nastavi delovanje četrtega ogrevalnega kroga na normalni režim": set_loop4_operating_mode_normal,
+        "nastavi delovanje ogrevalnega kroga štiri na normalni režim": set_loop4_operating_mode_normal,
+        "vklopi normalni režim na ogrevalnem krogu štiri": set_loop4_operating_mode_normal,
+        "vklopi normalni režim na četrtem ogrevalnem krogu": set_loop4_operating_mode_normal,
 
-        "Nastavi delovanje četrtega ogrevalnega kroga na delovanje po urniku": set_loop4_operating_mode_schedule,
-        "Nastavi delovanje ogrevalnega kroga štiri na delovanje po urniku": set_loop4_operating_mode_schedule,
-        "Vklopi delovanje po urniku na ogrevalnem krogu štiri": set_loop4_operating_mode_schedule,
-        "Vklopi delovanje po urniku na četrtem ogrevalnem krogu": set_loop4_operating_mode_schedule,
+        "nastavi delovanje četrtega ogrevalnega kroga na delovanje po urniku": set_loop4_operating_mode_schedule,
+        "nastavi delovanje ogrevalnega kroga štiri na delovanje po urniku": set_loop4_operating_mode_schedule,
+        "vklopi delovanje po urniku na ogrevalnem krogu štiri": set_loop4_operating_mode_schedule,
+        "vklopi delovanje po urniku na četrtem ogrevalnem krogu": set_loop4_operating_mode_schedule,
 
-        "Kašen je status delovanja četrtega ogrevalnega kroga": get_loop4_operating_mode,
-        "Kašen je status delovanja ogrevalnega kroga štiri": get_loop4_operating_mode,
+        "kakšen je status delovanja četrtega ogrevalnega kroga": get_loop4_operating_mode,
+        "kakšen je status delovanja ogrevalnega kroga štiri": get_loop4_operating_mode,
 
-        "Kakšna je temperatura ogrevalnega kroga štiri": get_loop4_temp,
-        "Kakšna je temperatura četrtega ogrevalnega kroga": get_loop4_temp,
+        "kakšna je temperatura ogrevalnega kroga štiri": get_loop4_temp,
+        "kakšna je temperatura četrtega ogrevalnega kroga": get_loop4_temp,
     }
