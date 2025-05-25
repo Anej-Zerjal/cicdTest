@@ -316,6 +316,9 @@ class MqttClient:
     async def get_loop1_room_target_temp(self) -> str:
         """Trenutna želena temperatura 1. kroga"""
         temp = await self.read_temperature(RegisterAddress.LOOP_1_CURRENT_TARGET_ROOM_TEMP)
+        if temp is 500:
+            return "Prvi ogrevalni krog je izklopljen."
+
         return f"Trenutna želena temperatura prostora prvega ogrevalnega kroga je {deg_imenovalnik(temp)}."
 
 
@@ -373,6 +376,9 @@ class MqttClient:
     async def get_loop2_room_target_temp(self) -> str:
         """Trenutna želena temperatura prostora 2. kroga"""
         temp = await self.read_temperature(RegisterAddress.LOOP_2_CURRENT_TARGET_ROOM_TEMP)
+        if temp is 500:
+            return "Drugi ogrevalni krog je izklopljen."
+
         return f"Trenutna želena temperatura prostora drugega ogrevalnega je {deg_imenovalnik(temp)}."
 
 
@@ -430,6 +436,9 @@ class MqttClient:
     async def get_loop3_room_target_temp(self) -> str:
         """Trenutna želena temperatura prostora 3. kroga"""
         temp = await self.read_temperature(RegisterAddress.LOOP_3_TARGET_ROOM_TEMP)
+        if temp is 500:
+            return "Tretji ogrevalni krog je izklopljen."
+
         return f"Trenutna želena temperatura tretjega ogrevalnega kroga je {deg_imenovalnik(temp)}."
 
 
@@ -487,6 +496,9 @@ class MqttClient:
     async def get_loop4_room_target_temp(self) -> str:
         """Trenutna želena temperatura prostora 4. kroga"""
         temp = await self.read_temperature(RegisterAddress.LOOP_4_TARGET_ROOM_TEMP)
+        if temp is 500:
+            return "Četrti ogrevalni krog je izklopljen."
+
         return f"Trenutna želena temperatura četrtega ogrevalnega kroga je {deg_imenovalnik(temp)}."
 
 
