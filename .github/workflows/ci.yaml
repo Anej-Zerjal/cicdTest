@@ -8,8 +8,8 @@ env:
     HA_VERSION: "0.42.4"
 
 jobs:
-    # ───────────────────────── unit tests ──────────────────────────
-    unit_tests:
+    # ───────────────────────── matcher tests ──────────────────────────
+    matcher_unit_tests:
         runs-on: ubuntu-latest
         strategy:
             matrix:
@@ -25,9 +25,9 @@ jobs:
             - name: Install deps
               run: |
                   python -m pip install -U pip
-                  pip install ".[test]" "homeassistant"
+                  pip install ".[test]"
 
-            - name: Run unit tests + coverage gate
+            - name: Run matcher unit tests + coverage gate
               run: |
                   pytest -q \
                     -m "not target_machine" \
@@ -38,7 +38,7 @@ jobs:
     # ───────────────────────── target machine tests ──────────────────────────
     target_machine_tests:
         runs-on: [self-hosted, Linux, ARM]
-        needs: unit_tests
+        needs: matcher_unit_tests
 
         steps:
             - uses: actions/checkout@v4
