@@ -5,7 +5,7 @@ on:
     pull_request:
 
 env:
-    HA_VERSION: "0.4"
+    HA_VERSION: "0.42.4"
 
 jobs:
     # ───────────────────────── unit tests ──────────────────────────
