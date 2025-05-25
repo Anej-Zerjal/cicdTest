@@ -42,6 +42,13 @@ floating_point_words = {
     "cela",
 }
 
+digit_to_text = {
+    "1": "ena",
+    "2": "dva",
+    "3": "tri",
+    "4": "štiri",
+}
+
 
 def find_last_number(text: str) -> str | None:
     matches = re.findall(r'\d+(?:\.\d+)?', text)
@@ -233,6 +240,18 @@ def replace_numbers_with_digits(text: str) -> str:
     return ' '.join(words)
 
 
+def insert_numbers_back(text: str) -> str:
+    words = text.split()
+    new_words = []
+    for word in words:
+        if word == 1 or word == 2 or word == 3 or word == 4:
+            new_words.append(digit_to_text[word])
+        else:
+            new_words.append(word)
+
+    return ' '.join(new_words)
+
+
 def match_command(text: str, commands: list[str]) -> tuple[str, float | None]:
     temperature = None
     if includes_temperature(text):
@@ -242,7 +261,7 @@ def match_command(text: str, commands: list[str]) -> tuple[str, float | None]:
             return "", None
 
         text = text.replace(temperature, "<temperature>")
-
+        text = insert_numbers_back(text)
 
     match = difflib.get_close_matches(text, commands, n=1, cutoff=0.65)
     if not match:
