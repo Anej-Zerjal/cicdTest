@@ -1,161 +1,258 @@
-import re
-import os
-from typing import Dict, List, Any, Iterable
+﻿import re
+import difflib
+from difflib import SequenceMatcher
 
-from rapidfuzz import process, fuzz
-from unidecode import unidecode
-
-from .kronoterm_models import KronotermAction
-from .mqtt_client import MqttClient
-
-_HERE = os.path.dirname(__file__)
-
-_RAW_UNIT_WORDS = {
-    "nič": 0, "ena": 1, "dva": 2, "tri": 3, "štiri": 4, "pet": 5,
-    "šest": 6, "sedem": 7, "osem": 8, "devet": 9,
-    "deset": 10, "enajst": 11, "dvanajst": 12, "trinajst": 13,
-    "štirinajst": 14, "petnajst": 15, "šestnajst": 16, "sedemnajst": 17,
-    "osemnajst": 18, "devetnajst": 19
+number_words = {
+    "eno": 1,
+    "ena": 1,
+    "dva": 2,
+    "dve": 2,
+    "tri": 3,
+    "štiri": 4,
+    "pet": 5,
+    "šest": 6,
+    "sedem": 7,
+    "osem": 8,
+    "devet": 9,
+    "deset": 10,
+    "enajst": 11,
+    "dvanajst": 12,
+    "trinajst": 13,
+    "štirinajst": 14,
+    "petnajst": 15,
+    "šestnajst": 16,
+    "sedemnajst": 17,
+    "osemnajst": 18,
+    "devetnajst": 19
 }
-_RAW_TENS_WORDS = {
-    "dvajset": 20, "trideset": 30, "štirideset": 40,
-    "petdeset": 50, "šestdeset": 60, "sedemdeset": 70,
-    "osemdeset": 80, "devetdeset": 90
+
+compound_number_words = {
+    "dvajset": 20,
+    "trideset": 30,
+    "štirideset": 40,
+    "petdeset": 50,
+    "šestdeset": 60,
+    "sedemdeset": 70,
+    "osemdeset": 80,
+    "devetdeset": 90,
 }
 
-_UNIT_WORDS = {unidecode(k): v for k, v in _RAW_UNIT_WORDS.items()}
-_TENS_WORDS = {unidecode(k): v for k, v in _RAW_TENS_WORDS.items()}
-_ALL_NUM_WORDS = {**_UNIT_WORDS, **_TENS_WORDS}
+floating_point_words = {
+    "celih",
+    "cela",
+}
 
 
-def parse_slovene_number(text: str) -> int:
-    text = unidecode(text.strip().lower())
-    if not text:
-        raise ValueError("Empty number text")
+def find_last_number(text: str) -> str | None:
+    matches = re.findall(r'\d+(?:\.\d+)?', text)
+    if not matches:
+        return None
 
-    if "in" in text:
-        left, right = text.split("in", 1)
+    last = matches[-1]
+    return last
+
+
+def get_float(word: str) -> float | None:
+    """
+    Extracts a floating point number from the word.
+    Returns None if no valid number is found.
+    """
+    try:
+        return float(word)
+    except ValueError:
         try:
-            return parse_slovene_number(left) + parse_slovene_number(right)
+            return float(word.replace(",", "."))
         except ValueError:
-            pass
-
-    if text.isdigit():
-        return int(text)
-
-    if text in _ALL_NUM_WORDS:
-        return _ALL_NUM_WORDS[text]
-
-    for ten_word, ten_val in _TENS_WORDS.items():
-        if text.startswith(ten_word):
-            suffix = text[len(ten_word):].strip()
-            try:
-                return ten_val + parse_slovene_number(suffix)
-            except ValueError:
-                pass
-
-    for ten_word, ten_val in _TENS_WORDS.items():
-        if text.endswith(ten_word):
-            prefix = text[:-len(ten_word)].strip()
-            try:
-                return ten_val + parse_slovene_number(prefix)
-            except ValueError:
-                pass
-
-    best, score, _ = process.extractOne(text, _ALL_NUM_WORDS.keys(), scorer=fuzz.partial_ratio)
-    if score >= 80:
-        return _ALL_NUM_WORDS[best]
-
-    m = re.search(r"(\d+)", text)
-    if m:
-        return int(m.group(1))
-
-    raise ValueError(f"Cannot parse number from '{text}'")
+            return None
 
 
-class _CmdTemplate:
-    __slots__ = ("template", "slot_names", "fixed", "regex")
+def includes_temperature(text: str, ensured_similarity: float = 0.65) -> bool:
+    """
+    Checks if the text includes a temperature command.
+    """
+    if "°C" in text:
+        return True
 
-    def __init__(self, tpl: str):
-        self.template = tpl
-        self.slot_names = re.findall(r"<(\w+)>", tpl)
-        self.fixed = re.sub(r"<\w+>", "", tpl).strip().lower()
-
-        pat = re.escape(tpl.lower())
-        pat = re.sub(r"\\ ", r"\\s+", pat)  # Allow flexible spacing
-
-        for name in self.slot_names:
-            if name == "temperature":
-                slot_pattern = r"(?P<temperature>[\d\wčšž\s]+?)"  # Keep it somewhat broad initially
-            else:
-                # Generic pattern for other potential future slots
-                slot_pattern = rf"(?P<{name}>[\wčšž\s]+?)"
-
-            pat = pat.replace(
-                re.escape(f"<{name}>"),
-                slot_pattern
-            )
-
-        self.regex = re.compile(rf"^{pat}$", re.IGNORECASE)
+    words = text.lower().split()
+    last_word = words[-1]
+    match = get_similarity(last_word, "stopinj")
+    return match >= ensured_similarity
 
 
-class KronotermParser:
-    def __init__(self, templates: Iterable[str]):
-        self._templates: List[_CmdTemplate] = [
-            _CmdTemplate(template_string)
-            for template_string in templates
-        ]
+def get_similarity(a: str, b: str) -> float:
+    return SequenceMatcher(None, a, b).ratio()
 
 
-    def _normalize(self, text: str) -> str:
-        text = text.lower()
-        text = re.sub(r"[^\w\sčšž]", " ", text)
-        text = re.sub(r"\b(um+|ahm+|eee+|please|prosim|hej)\b", " ", text)
-        return re.sub(r"\s+", " ", text).strip()
-
-    def parse(self, transcription: str,
-              threshold: int = 70) -> KronotermAction:
-        clean = self._normalize(transcription)
-        mapping = {tpl.fixed: tpl for tpl in self._templates}
-        # Ensure mapping is not empty to prevent error with process.extractOne
-        if not mapping:
-            raise ValueError(f"No command templates loaded from config. Cannot parse '{transcription}'.")
-
-        best_fixed, score, _ = process.extractOne(clean, mapping.keys(), scorer=fuzz.partial_ratio)
-
-        if score < threshold:
-            raise ValueError(f"No command matches '{transcription}' (best score={score}, threshold={threshold})")
-        cmd = mapping[best_fixed]
-
-        match = cmd.regex.match(clean)
-        params: Dict[str, Any] = {}
+def insert_dots_for_floats(words: list[str]) -> list[str]:
+    for i in range(len(words)):
+        word = words[i]
+        match = difflib.get_close_matches(word, floating_point_words, n=1, cutoff=0.80)
         if match:
-            for name, raw_value_from_regex in match.groupdict().items():
-                raw_value_from_regex = raw_value_from_regex.strip()
-                if name == "temperature":
-                    try:
-                        cleaned_raw_value = raw_value_from_regex
-                        for suffix_to_remove in [" stopinj", " stopinje", " stopinjo"]:
-                            if cleaned_raw_value.lower().endswith(suffix_to_remove):
-                                cleaned_raw_value = cleaned_raw_value[:-len(suffix_to_remove)].strip()
-                                break  # Remove only one suffix
+            words[i] = "."
 
-                        params[name] = parse_slovene_number(cleaned_raw_value)
-                    except ValueError:
-                        params[name] = raw_value_from_regex  # Fallback to raw if number parsing fails
-                else:
-                    # For other types of slots in the future
-                    try:
-                        # Assuming other future slots might also be numbers, or handle differently
-                        params[name] = parse_slovene_number(raw_value_from_regex)
-                    except ValueError:
-                        params[name] = raw_value_from_regex
-
-        return KronotermAction(action=cmd.template, parameters=params)
+    return words
 
 
-async def execute_command(text: str) -> str:
-    client = MqttClient()
-    parser = KronotermParser(client.map_template_to_function.keys())
-    action_obj: KronotermAction = parser.parse(text)
-    return await client.invoke_kronoterm_action(action_obj)
+def merge_floats(words: list[str]) -> list[str]:
+    new_words = []
+    i = 0
+    while i < len(words):
+        if i + 2 < len(words) and words[i].isdigit() and (words[i + 1] == "." or words[i + 1] == ",") and words[
+            i + 2].isdigit():
+            merged = f"{int(words[i])}.{int(words[i + 2])}"
+            new_words.append(merged)
+            i += 3
+        else:
+            new_words.append(words[i])
+            i += 1
+
+    return new_words
+
+
+def merge_numbers(words: list[str]) -> list[str]:
+    new_words = []
+    i = 0
+    while i < len(words):
+        if i + 2 < len(words) and words[i].isdigit() and words[i + 1] == "in" and words[i + 2].isdigit():
+            merged = str(int(words[i]) + int(words[i + 2]))
+            new_words.append(merged)
+            i += 3
+        else:
+            new_words.append(words[i])
+            i += 1
+
+    return new_words
+
+
+def slovenian_word_to_number_strict(word) -> str | None:
+    """Converts a Slovenian number word to its digit equivalent"""
+
+    if get_float(word) is not None:
+        return str(get_float(word))
+
+    if word.isdigit():
+        return word
+
+    word = word.translate(str.maketrans('', '', "!?"))
+    if get_float(word) is not None:
+        return str(get_float(word))
+
+    if word.isdigit():
+        return word
+
+    word = word.translate(str.maketrans('', '', ",."))
+    if word.isdigit():
+        return word
+
+    if word == "nič":
+        return "0"
+
+    if word in number_words.keys():
+        return str(number_words[word])
+    if word in compound_number_words.keys():
+        return str(compound_number_words[word])
+
+    for tens_word, tens_val in compound_number_words.items():
+        if word.endswith(tens_word):
+            prefix = word[: -(len("in" + tens_word))]
+            if prefix in number_words:
+                return str(number_words[prefix] + tens_val)
+
+    return None
+
+
+def slovenian_word_to_number(word) -> str | None:
+    """Converts a Slovenian number word to its digit equivalent, allowing for slight typos."""
+
+    word = word.translate(str.maketrans('', '', ",.!?"))
+    if len(word) < 3:
+        return None
+
+    direct_similarity = 0.86
+    match = difflib.get_close_matches(word, number_words.keys(), n=1, cutoff=direct_similarity)
+    if match:
+        return str(number_words[match[0]])
+
+    match = difflib.get_close_matches(word, compound_number_words.keys(), n=1, cutoff=direct_similarity)
+    if match:
+        return str(compound_number_words[match[0]])
+
+    compound_similarity = 0.7
+    best_suff = (0.0, None, None)
+    for tens_word in compound_number_words.keys():
+        L = len(tens_word)
+        for suffix_len in range(max(1, L - 2), L + 3):
+            suffix = word[-suffix_len:]
+            sim = get_similarity(suffix, tens_word)
+            if sim >= compound_similarity and sim > best_suff[0]:
+                best_suff = (sim, tens_word, suffix)
+
+    sim, tens_word, suffix = best_suff
+    if sim == 0:
+        return None
+
+    remainder = word[:-len(suffix)]
+    best_pref = (0.0, None, None)
+    for number_word in number_words.keys():
+        L = len(number_word)
+        for prefix_len in range(max(3, L - 2), L + 3):
+            prefix = remainder[:prefix_len]
+            sim = get_similarity(prefix, number_word)
+            if sim >= compound_similarity and sim > best_pref[0]:
+                best_pref = (sim, number_word, prefix)
+
+    sim, number_word, prefix = best_pref
+    if sim == 0:
+        return None
+
+    return str(number_words[number_word] + compound_number_words[tens_word])
+
+
+def replace_numbers_with_digits(text: str) -> str:
+    """Replaces Slovenian number words in the text with their digit equivalents"""
+    words = text.lower().split()
+    new_words = []
+    for word in words:
+        number = slovenian_word_to_number_strict(word)
+        if number is None:
+            new_words.append(word)
+        else:
+            new_words.append(number)
+
+    words = []
+    for word in new_words:
+        number = slovenian_word_to_number(word)
+        if number is None:
+            words.append(word)
+        else:
+            words.append(number)
+
+    words = merge_numbers(words)
+    words = insert_dots_for_floats(words)
+    words = merge_floats(words)
+    return ' '.join(words)
+
+
+def match_command(text: str, commands: list[str]) -> tuple[str, float | None]:
+    temperature = None
+    if includes_temperature(text):
+        text = replace_numbers_with_digits(text)
+        temperature = find_last_number(text)
+        if temperature is None:
+            return "", None
+
+        text = text.replace(temperature, "")
+
+    prepared_commands = []
+    for command in commands:
+        command = command.replace("<temperature>", "")
+        prepared_commands.append(command.strip())
+
+    match = difflib.get_close_matches(text, prepared_commands, n=1, cutoff=0.65)
+    if not match:
+        return "", None
+
+    if temperature is None:
+        return match[0], None
+
+    return match[0], float(temperature)
