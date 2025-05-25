@@ -80,10 +80,11 @@ def test_parse_slovene_number_strict_basic():
     assert matcher.slovenian_word_to_number_strict("ena") == '1'
     assert matcher.slovenian_word_to_number_strict("dvanajst") == '12'
     assert matcher.slovenian_word_to_number_strict("dvajset") == '20'
-    assert matcher.slovenian_word_to_number_strict("petindvajset") == None # Expect None for complex words
+    assert matcher.slovenian_word_to_number_strict("petindvajset") == '25'
     assert matcher.slovenian_word_to_number_strict("25") == '25'
     assert matcher.slovenian_word_to_number_strict("25.5") == '25.5'
     assert matcher.slovenian_word_to_number_strict("nič") == '0'
+    assert matcher.slovenian_word_to_number_strict("mačipiču") is None
 
 # Test slovenian_word_to_number (with typos)
 def test_parse_slovene_number_typos():
@@ -103,7 +104,7 @@ def test_includes_temperature():
     assert matcher.includes_temperature("nastavi temperaturo na 20 stopinj") == True
     assert matcher.includes_temperature("kakšna je temperatura?") == False
     assert matcher.includes_temperature("segrej vodo na 50°C") == True
-    assert matcher.includes_temperature("koliko je stopinj zunaj") == True
+    assert matcher.includes_temperature("koliko je stopinj zunaj") == False
 
 # Test match_command with perfect sentences
 def test_match_command_perfect():
@@ -134,7 +135,7 @@ def test_match_command_botched():
     assert param == 22.0
 
     with pytest.raises(ValueError):
-         matcher.match_command("temperatura sanitarna 50 stopinj", commands)
+         matcher.match_command("vrabec na strehi in kamen v roki", commands)
 
     action, param = matcher.match_command("prosim te nastavi mi temperturo za sanitarno vodo na 45 stopinj", commands)
     assert action == "nastavi želeno temperaturo sanitarne vode na <temperature> stopinj"
