@@ -156,7 +156,7 @@ def slovenian_word_to_number_strict(word) -> str | None:
         return str(get_float(word))
 
     if word == "nič":
-        return "0"
+        return "0.0"
 
     if word in number_words.keys():
         return str(float(number_words[word]))
