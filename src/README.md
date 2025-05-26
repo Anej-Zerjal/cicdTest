@@ -4,9 +4,7 @@
 
 Ta dodatek omogoča glasovno upravljanje vaše Kronoterm črpalke preko Home Assistant. Uporablja **Whisper** za prepoznavanje govora in **Piper** za sintezo govora, kar omogoča interakcijo s sistemom Kronoterm preko naravnega jezika.
 
-[Video](https://youtu.be/jNl_yXXjG2U)
-
-<iframe width="560" height="315" src="https://youtu.be/jNl_yXXjG2U" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+[Video demonstracija](https://youtu.be/jNl_yXXjG2U)
 
 ## Predpogoji
 
@@ -21,6 +19,11 @@ Ta dodatek omogoča glasovno upravljanje vaše Kronoterm črpalke preko Home Ass
 * **Podpora za slovenski jezik**: Integracija podpira slovenski jezik, kar omogoča naravno interakcijo.
 * **100% lokalno**: Vse operacije se izvajajo lokalno, brez potrebe po zunanjih strežnikih ali internetni povezavi.
 * **Povratna informacija**: Integracija omogoča povratno informacijo, kar pomeni, da lahko sistem odgovori na vaše ukaze in vprašanja.
+
+<details>
+  <summary>Click to expand</summary>
+  This is the content that will be hidden or shown.
+</details>
 
 ![Primer pogovora](/assets/image4.png "Primer pogovora")
 
