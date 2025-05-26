@@ -33,5 +33,6 @@ test = [
     "pymodbus",
     "rapidfuzz",
     "unidecode",
-    "pyserial"
+    "pyserial",
+    "ffmpeg"
 ]
