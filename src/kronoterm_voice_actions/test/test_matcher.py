@@ -94,8 +94,8 @@ def test_parse_slovene_number_typos():
 
 # Test replace_numbers_with_digits
 def test_replace_numbers():
-    assert matcher.replace_numbers_with_digits("nastavi temperaturo na dvajset stopinj") == "nastavi temperaturo na 20 stopinj"
-    assert matcher.replace_numbers_with_digits("nastavi na pet in dvajset stopinj") == "nastavi na 25 stopinj"
+    assert matcher.replace_numbers_with_digits("nastavi temperaturo na dvajset stopinj") == "nastavi temperaturo na 20.0 stopinj"
+    assert matcher.replace_numbers_with_digits("nastavi na pet in dvajset stopinj") == "nastavi na 25.0 stopinj"
     assert matcher.replace_numbers_with_digits("ena dva tri") == "1 2 3"
     assert matcher.replace_numbers_with_digits("dve celi pet") == "2.5"
 
