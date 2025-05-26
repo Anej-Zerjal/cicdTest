@@ -21,8 +21,11 @@ Ta dodatek omogoča glasovno upravljanje vaše Kronoterm črpalke preko Home Ass
 * **Povratna informacija**: Integracija omogoča povratno informacijo, kar pomeni, da lahko sistem odgovori na vaše ukaze in vprašanja.
 
 <details>
-  <summary>Click to expand</summary>
-  This is the content that will be hidden or shown.
+  <summary>Placeholder</summary>
+  <ul>
+    <li>kakšna je temperatura ogrevalnega kroga štiri</li>
+    <li>kakšna je temperatura četrtega ogrevalnega kroga</li>
+  </ul>
 </details>
 
 ![Primer pogovora](/assets/image4.png "Primer pogovora")
