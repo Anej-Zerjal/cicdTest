@@ -22,13 +22,14 @@ Ta dodatek omogoča glasovno upravljanje vaše Kronoterm črpalke preko Home Ass
 
 <details>
     <summary><b>Možni ukazi za posamezne funkcionalnosti (Klikni in poglej)</b></summary>
+
     <details>
-    <summary>Poizvedba stanja sistema</summary>
-    <ul>
-        <li>"ali je sistem vklopljen"</li>
-        <li>"ali je sistem izklopljen"</li>
-        <li>"kakšno je stanje sistema"</li>
-    </ul>
+        <summary>Poizvedba stanja sistema</summary>
+        <ul>
+            <li>"ali je sistem vklopljen"</li>
+            <li>"ali je sistem izklopljen"</li>
+            <li>"kakšno je stanje sistema"</li>
+        </ul>
     </details>
 
     <details>
@@ -270,7 +271,7 @@ Ta dodatek omogoča glasovno upravljanje vaše Kronoterm črpalke preko Home Ass
         <li>"kakšna je temperatura [prvega/drugega/tretjega/četrtega] ogrevalnega kroga"</li>
     </ul>
     </details>
-<details>
+</details>
 
 
 
