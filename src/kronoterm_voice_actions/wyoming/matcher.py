@@ -97,7 +97,7 @@ def get_similarity(a: str, b: str) -> float:
 def insert_dots_for_floats(words: list[str]) -> list[str]:
     for i in range(len(words)):
         word = words[i]
-        match = difflib.get_close_matches(word, floating_point_words, n=1, cutoff=0.80)
+        match = difflib.get_close_matches(word, floating_point_words, n=1, cutoff=0.79)
         if match:
             words[i] = "."
 
