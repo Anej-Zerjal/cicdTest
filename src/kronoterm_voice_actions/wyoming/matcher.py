@@ -267,7 +267,7 @@ def match_command(text: str, commands: list[str]) -> tuple[str, float | None]:
         text = replace_numbers_with_digits(text)
         temperature = find_last_number(text)
         if temperature is None:
-            return "", None
+            raise ValueError
 
         text = text.replace(temperature, "<temperature>")
 
@@ -275,7 +275,7 @@ def match_command(text: str, commands: list[str]) -> tuple[str, float | None]:
     print(f"Processed text: {text}")
     match = difflib.get_close_matches(text, commands, n=1, cutoff=0.65)
     if not match:
-        return "", None
+        raise ValueError
 
     match = match
     if temperature is None:
