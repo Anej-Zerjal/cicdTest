@@ -29,5 +29,8 @@ test = [
     "pytest",
     "pytest-asyncio",
     "pytest-homeassistant-custom-component",
-    "coverage"
+    "coverage",
+    "pymodbus",
+    "rapidfuzz",
+    "unidecode"
 ]
