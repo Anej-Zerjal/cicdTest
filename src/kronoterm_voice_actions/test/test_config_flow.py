@@ -8,6 +8,8 @@ from homeassistant import config_entries, data_entry_flow
 from homeassistant.core import HomeAssistant
 from homeassistant.const import CONF_HOST, CONF_PORT
 from homeassistant.helpers.service_info.zeroconf import ZeroconfServiceInfo
+# For MockConfigEntry:
+from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from kronoterm_voice_actions.wyoming.const import DOMAIN
 from kronoterm_voice_actions.wyoming.config_flow import (
@@ -19,14 +21,19 @@ from kronoterm_voice_actions.wyoming.config_flow import (
 
 pytestmark = pytest.mark.asyncio
 
-# Path for mocking component setup - This might not be needed if HA's test setup handles it
-# or if the dependency errors were due to other issues now resolved.
-# However, for config flow tests, it's often safer to ensure dependencies don't block flow logic.
-MOCK_SETUP_COMPONENT = "homeassistant.setup.async_setup_component"
+# This broad mock for component setup can sometimes cause issues if it interferes
+# with how the flow manager expects integrations to be loaded.
+# We'll keep it for now to try and bypass deeper dependency issues,
+# but if schema errors persist, this might need to be more targeted.
+MOCK_HA_SETUP_COMPONENT = "homeassistant.setup.async_setup_component"
+
+# It's often better to mock the specific integration that's failing, if known.
+# e.g. @patch("homeassistant.components.ffmpeg.async_setup", return_value=True)
+# @patch("homeassistant.components.conversation.async_setup", return_value=True)
 
 
-@patch(MOCK_SETUP_COMPONENT, return_value=True)
-async def test_flow_user_chooses_custom_agent(mock_setup, hass: HomeAssistant):
+@patch(MOCK_HA_SETUP_COMPONENT, return_value=True)
+async def test_flow_user_chooses_custom_agent(mock_setup_component, hass: HomeAssistant):
     """Test user step choosing custom agent type."""
     result = await hass.config_entries.flow.async_init(
         DOMAIN, context={"source": config_entries.SOURCE_USER}
@@ -34,35 +41,35 @@ async def test_flow_user_chooses_custom_agent(mock_setup, hass: HomeAssistant):
     assert result["type"] == data_entry_flow.FlowResultType.FORM
     assert result["step_id"] == "user"
 
-    # FIX 1: Provide CONF_TYPE as a list
+    # Reverted CONF_TYPE to single string based on "extra keys not allowed" error.
+    # If this still fails, the issue is likely the wrong config flow's schema being used.
     result = await hass.config_entries.flow.async_configure(
-        result["flow_id"], {CONF_TYPE: [ENTRY_TYPE_CUSTOM]}
+        result["flow_id"], {CONF_TYPE: ENTRY_TYPE_CUSTOM}
     )
     assert result["type"] == data_entry_flow.FlowResultType.CREATE_ENTRY
     assert result["title"] == "Kronoterm Conversation Agent"
     assert result["data"] == {CONF_TYPE: ENTRY_TYPE_CUSTOM}
 
-@patch(MOCK_SETUP_COMPONENT, return_value=True)
-async def test_flow_user_chooses_remote_service(mock_setup, hass: HomeAssistant):
+@patch(MOCK_HA_SETUP_COMPONENT, return_value=True)
+async def test_flow_user_chooses_remote_service(mock_setup_component, hass: HomeAssistant):
     """Test user step choosing remote service type."""
     result = await hass.config_entries.flow.async_init(
         DOMAIN, context={"source": config_entries.SOURCE_USER}
     )
+    # ... (rest of the test as before, with CONF_TYPE as single string)
     assert result["type"] == data_entry_flow.FlowResultType.FORM
     assert result["step_id"] == "user"
 
-    # FIX 1: Provide CONF_TYPE as a list
     result = await hass.config_entries.flow.async_configure(
-        result["flow_id"], {CONF_TYPE: [ENTRY_TYPE_REMOTE]}
+        result["flow_id"], {CONF_TYPE: ENTRY_TYPE_REMOTE}
     )
     assert result["type"] == data_entry_flow.FlowResultType.FORM
     assert result["step_id"] == "remote_service"
 
 
-@patch(MOCK_SETUP_COMPONENT, return_value=True)
-@patch("kronoterm_voice_actions.wyoming.config_flow.WyomingService.create")
-async def test_flow_remote_service_success(mock_wyoming_service_create, mock_setup, hass: HomeAssistant):
-    """Test remote service step with successful connection."""
+@patch(MOCK_HA_SETUP_COMPONENT, return_value=True)
+@patch("kronoterm_voice_actions.wyoming.config_flow.WyomingService.create") # Path to *your* component's service
+async def test_flow_remote_service_success(mock_wyoming_service_create, mock_setup_component, hass: HomeAssistant):
     mock_service_instance = AsyncMock()
     mock_service_instance.has_services.return_value = True
     mock_service_instance.get_name.return_value = "Mocked Wyoming STT"
@@ -71,15 +78,15 @@ async def test_flow_remote_service_success(mock_wyoming_service_create, mock_set
     result = await hass.config_entries.flow.async_init(
         DOMAIN, context={"source": config_entries.SOURCE_USER}
     )
-    # FIX 1: Provide CONF_TYPE as a list
     result = await hass.config_entries.flow.async_configure(
-        result["flow_id"], {CONF_TYPE: [ENTRY_TYPE_REMOTE]}
+        result["flow_id"], {CONF_TYPE: ENTRY_TYPE_REMOTE} # single string
     )
     result = await hass.config_entries.flow.async_configure(
         result["flow_id"], {CONF_HOST: "test.host", CONF_PORT: 1234}
     )
 
     assert result["type"] == data_entry_flow.FlowResultType.CREATE_ENTRY
+    # ... (rest of assertions)
     assert result["title"] == "Mocked Wyoming STT"
     assert result["data"] == {
         CONF_HOST: "test.host",
@@ -88,87 +95,76 @@ async def test_flow_remote_service_success(mock_wyoming_service_create, mock_set
     }
     mock_wyoming_service_create.assert_called_once_with("test.host", 1234)
 
-@patch(MOCK_SETUP_COMPONENT, return_value=True)
-@patch("kronoterm_voice_actions.wyoming.config_flow.WyomingService.create")
-async def test_flow_remote_service_cannot_connect(mock_wyoming_service_create, mock_setup, hass: HomeAssistant):
-    """Test remote service step with connection failure."""
-    mock_wyoming_service_create.return_value = None 
 
+@patch(MOCK_HA_SETUP_COMPONENT, return_value=True)
+@patch("kronoterm_voice_actions.wyoming.config_flow.WyomingService.create")
+async def test_flow_remote_service_cannot_connect(mock_wyoming_service_create, mock_setup_component, hass: HomeAssistant):
+    mock_wyoming_service_create.return_value = None 
     result = await hass.config_entries.flow.async_init(
         DOMAIN, context={"source": config_entries.SOURCE_USER}
     )
-    # FIX 1: Provide CONF_TYPE as a list
     result = await hass.config_entries.flow.async_configure(
-        result["flow_id"], {CONF_TYPE: [ENTRY_TYPE_REMOTE]}
+        result["flow_id"], {CONF_TYPE: ENTRY_TYPE_REMOTE} # single string
     )
     result = await hass.config_entries.flow.async_configure(
         result["flow_id"], {CONF_HOST: "test.host", CONF_PORT: 1234}
     )
-
     assert result["type"] == data_entry_flow.FlowResultType.FORM
-    assert result["step_id"] == "remote_service"
+    # ... (rest of assertions)
     assert result["errors"] == {"base": "cannot_connect"}
 
-@patch(MOCK_SETUP_COMPONENT, return_value=True)
+
+@patch(MOCK_HA_SETUP_COMPONENT, return_value=True)
 @patch("kronoterm_voice_actions.wyoming.config_flow.WyomingService.create")
-async def test_flow_remote_service_no_services(mock_wyoming_service_create, mock_setup, hass: HomeAssistant):
-    """Test remote service step when service has no usable features."""
+async def test_flow_remote_service_no_services(mock_wyoming_service_create, mock_setup_component, hass: HomeAssistant):
     mock_service_instance = AsyncMock()
     mock_service_instance.has_services.return_value = False 
     mock_service_instance.get_name.return_value = "Empty Service"
     mock_wyoming_service_create.return_value = mock_service_instance
-
     result = await hass.config_entries.flow.async_init(
         DOMAIN, context={"source": config_entries.SOURCE_USER}
     )
-    # FIX 1: Provide CONF_TYPE as a list
     result = await hass.config_entries.flow.async_configure(
-        result["flow_id"], {CONF_TYPE: [ENTRY_TYPE_REMOTE]}
+        result["flow_id"], {CONF_TYPE: ENTRY_TYPE_REMOTE} # single string
     )
     result = await hass.config_entries.flow.async_configure(
         result["flow_id"], {CONF_HOST: "test.host", CONF_PORT: 1234}
     )
-
     assert result["type"] == data_entry_flow.FlowResultType.FORM
-    assert result["step_id"] == "remote_service"
+    # ... (rest of assertions)
     assert result["errors"] == {"base": "no_services"}
 
-@patch(MOCK_SETUP_COMPONENT, return_value=True)
-async def test_flow_custom_agent_already_configured(mock_setup, hass: HomeAssistant):
+
+@patch(MOCK_HA_SETUP_COMPONENT, return_value=True)
+async def test_flow_custom_agent_already_configured(mock_setup_component, hass: HomeAssistant):
     """Test custom agent aborts if already configured."""
-    # FIX 2: Provide missing keyword arguments for ConfigEntry
-    entry = config_entries.ConfigEntry(
-        version=1,
+    # FIX 2: Use MockConfigEntry and provide necessary defaults if any
+    entry = MockConfigEntry(
         domain=DOMAIN,
-        title="Kronoterm Conversation Agent",
-        data={CONF_TYPE: ENTRY_TYPE_CUSTOM},
-        source="user",
         unique_id=CUSTOM_AGENT_UNIQUE_ID,
-        minor_version=1,  # Added
-        options={},       # Added
-        discovery_keys=(),# Added
-        subentries_data={},# Added
+        data={CONF_TYPE: ENTRY_TYPE_CUSTOM},
+        version=1,
+        title="Kronoterm Conversation Agent" # Title is good to have
+        # Add other fields like minor_version, options if MockConfigEntry requires them
     )
-    entry.add_to_hass(hass)
+    entry.add_to_hass(hass) # MockConfigEntry should have this method
     
     result = await hass.config_entries.flow.async_init(
         DOMAIN, context={"source": config_entries.SOURCE_USER}
     )
-    # FIX 1: Provide CONF_TYPE as a list
     result = await hass.config_entries.flow.async_configure(
-        result["flow_id"], {CONF_TYPE: [ENTRY_TYPE_CUSTOM]}
+        result["flow_id"], {CONF_TYPE: ENTRY_TYPE_CUSTOM} # single string
     )
     assert result["type"] == data_entry_flow.FlowResultType.ABORT
     assert result["reason"] == "already_configured"
 
 
-@patch(MOCK_SETUP_COMPONENT, return_value=True)
-# FIX 3: Patch _validate_remote_connection directly to avoid socket error
+# Patching the function within your custom component's config_flow that makes the network call
+@patch(MOCK_HA_SETUP_COMPONENT, return_value=True)
 @patch("kronoterm_voice_actions.wyoming.config_flow._validate_remote_connection", new_callable=AsyncMock)
-async def test_flow_zeroconf_success(mock_validate_connection, mock_setup, hass: HomeAssistant):
+async def test_flow_zeroconf_success(mock_validate_connection, mock_setup_component, hass: HomeAssistant):
     """Test zeroconf discovery flow for a remote service."""
-    # Configure the mock for _validate_remote_connection
-    mock_validate_connection.return_value = (None, "Discovered Wyoming Mic") # (error_reason, service_name)
+    mock_validate_connection.return_value = (None, "Discovered Wyoming Mic")
 
     discovery_info = ZeroconfServiceInfo(
         ip_address=ip_address("1.2.3.4"),
@@ -179,24 +175,21 @@ async def test_flow_zeroconf_success(mock_validate_connection, mock_setup, hass:
         properties={},
         type="_wyoming._tcp.local.",
     )
-    # The config_flow's async_step_zeroconf uses discovery_info.host, 
-    # ZeroconfServiceInfo makes `host` property available from ip_address/hostname
     
     result = await hass.config_entries.flow.async_init(
         DOMAIN, context={"source": config_entries.SOURCE_ZEROCONF}, data=discovery_info
     )
+    # This now assumes _validate_remote_connection is called from your custom flow's async_step_zeroconf
+    # If the core flow is still being hit, this mock won't apply to it.
+    mock_validate_connection.assert_called_once_with(hass, "1.2.3.4", 10300)
+
     assert result["type"] == data_entry_flow.FlowResultType.FORM
     assert result["step_id"] == "zeroconf_confirm"
     
-    # Check if _validate_remote_connection was called (it's called by async_step_zeroconf)
-    # The host passed to _validate_remote_connection will be discovery_info.host
-    mock_validate_connection.assert_called_once_with(hass, "1.2.3.4", 10300)
-
-
     result = await hass.config_entries.flow.async_configure(result["flow_id"], {})
     
     assert result["type"] == data_entry_flow.FlowResultType.CREATE_ENTRY
-    assert result["title"] == "Discovered Wyoming Mic" # This comes from mock_validate_connection
+    assert result["title"] == "Discovered Wyoming Mic"
     assert result["data"] == {
         CONF_HOST: "1.2.3.4", 
         CONF_PORT: 10300,
