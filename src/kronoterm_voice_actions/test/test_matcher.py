@@ -168,13 +168,3 @@ def test_match_command_botched():
     action, param = matcher.match_command("uklopi sstm", commands)
     assert action == "vklopi sistem"
     assert param is None
-
-    # This test might fail if "kopalnica" isn't mapped or similarity is too low
-    # action, param = matcher.match_command("koliko je stopinj v kopalnici", commands)
-    # assert action == "kakšna je temperatura ogrevalnega kroga dva" # Assuming 'kopalnica' is loop 2
-    # assert param is None
-
-    # This test might fail if context isn't handled or similarity is too low
-    # action, param = matcher.match_command("sanitarno vodo na trideset", commands)
-    # assert action == "nastavi temperaturo sanitarne vode na <temperature> stopinj"
-    # assert param == 30.0
