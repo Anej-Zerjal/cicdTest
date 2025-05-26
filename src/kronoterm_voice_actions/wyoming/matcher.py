@@ -120,7 +120,7 @@ def merge_floats(words: list[str]) -> list[str]:
     i = 0
     while i < len(words):
         if i + 2 < len(words) and is_float(words[i]) and (words[i + 1] == "." or words[i + 1] == ",") and is_float(words[i + 2]):
-            merged = f"{int(words[i])}.{int(words[i + 2])}"
+            merged = f"{get_float(words[i])}.{get_float(words[i + 2])}"
             new_words.append(merged)
             i += 3
         else:
