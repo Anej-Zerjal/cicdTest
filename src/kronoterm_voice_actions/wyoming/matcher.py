@@ -142,32 +142,32 @@ def slovenian_word_to_number_strict(word) -> str | None:
         return str(get_float(word))
 
     if word.isdigit():
-        return word
+        return str(get_float(word))
 
     word = word.translate(str.maketrans('', '', "!?"))
     if get_float(word) is not None:
         return str(get_float(word))
 
     if word.isdigit():
-        return word
+        return str(get_float(word))
 
     word = word.translate(str.maketrans('', '', ",."))
     if word.isdigit():
-        return word
+        return str(get_float(word))
 
     if word == "nič":
         return "0"
 
     if word in number_words.keys():
-        return str(number_words[word])
+        return str(float(number_words[word]))
     if word in compound_number_words.keys():
-        return str(compound_number_words[word])
+        return str(float(compound_number_words[word]))
 
     for tens_word, tens_val in compound_number_words.items():
         if word.endswith(tens_word):
             prefix = word[: -(len("in" + tens_word))]
             if prefix in number_words:
-                return str(number_words[prefix] + tens_val)
+                return str(float(number_words[prefix] + tens_val))
 
     return None
 
@@ -182,11 +182,11 @@ def slovenian_word_to_number(word) -> str | None:
     direct_similarity = 0.86
     match = difflib.get_close_matches(word, number_words.keys(), n=1, cutoff=direct_similarity)
     if match:
-        return str(number_words[match[0]])
+        return str(float(number_words[match[0]]))
 
     match = difflib.get_close_matches(word, compound_number_words.keys(), n=1, cutoff=direct_similarity)
     if match:
-        return str(compound_number_words[match[0]])
+        return str(float(compound_number_words[match[0]]))
 
     compound_similarity = 0.7
     best_suff = (0.0, None, None)
@@ -216,7 +216,7 @@ def slovenian_word_to_number(word) -> str | None:
     if sim == 0:
         return None
 
-    return str(number_words[number_word] + compound_number_words[tens_word])
+    return str(float(number_words[number_word] + compound_number_words[tens_word]))
 
 
 def replace_numbers_with_digits(text: str) -> str:
@@ -267,7 +267,7 @@ def match_command(text: str, commands: list[str]) -> tuple[str, float | None]:
         text = replace_numbers_with_digits(text)
         temperature = find_last_number(text)
         if temperature is None:
-            raise ValueError
+            return "", None
 
         text = text.replace(temperature, "<temperature>")
 
@@ -275,7 +275,7 @@ def match_command(text: str, commands: list[str]) -> tuple[str, float | None]:
     print(f"Processed text: {text}")
     match = difflib.get_close_matches(text, commands, n=1, cutoff=0.65)
     if not match:
-        raise ValueError
+        return "", None
 
     match = match
     if temperature is None:
