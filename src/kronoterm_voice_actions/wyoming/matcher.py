@@ -77,6 +77,17 @@ def get_float(word: str) -> float | None:
             return None
 
 
+def is_float(word: str) -> bool:
+    try:
+        float(word)
+        return True
+    except ValueError:
+        try:
+            float(word.replace(",", "."))
+        except ValueError:
+            return False
+
+
 def includes_temperature(text: str, ensured_similarity: float = 0.65) -> bool:
     """
     Checks if the text includes a temperature command.
@@ -108,8 +119,7 @@ def merge_floats(words: list[str]) -> list[str]:
     new_words = []
     i = 0
     while i < len(words):
-        if i + 2 < len(words) and words[i].isdigit() and (words[i + 1] == "." or words[i + 1] == ",") and words[
-            i + 2].isdigit():
+        if i + 2 < len(words) and is_float(words[i]) and (words[i + 1] == "." or words[i + 1] == ",") and is_float(words[i + 2]):
             merged = f"{int(words[i])}.{int(words[i + 2])}"
             new_words.append(merged)
             i += 3
@@ -124,8 +134,8 @@ def merge_numbers(words: list[str]) -> list[str]:
     new_words = []
     i = 0
     while i < len(words):
-        if i + 2 < len(words) and words[i].isdigit() and words[i + 1] == "in" and words[i + 2].isdigit():
-            merged = str(int(words[i]) + int(words[i + 2]))
+        if i + 2 < len(words) and is_float(words[i]) and words[i + 1] == "in" and is_float(words[i + 2]):
+            merged = str(get_float(words[i]) + get_float(words[i + 2]))
             new_words.append(merged)
             i += 3
         else:
