@@ -25,11 +25,11 @@ Ta dodatek omogoča glasovno upravljanje vaše Kronoterm črpalke preko Home Ass
 ### Možni ukazi za posamezne funkcionalnosti
 
 <details>
-<summary><b>Klikni in poglej</b></summary>
+<summary><h4>Klikni in poglej</h4></summary>
 <br>
-<p><it>
+<p><b>
 Za želeno funkcijo lahko izgovorite pripadajoče ukaze, ki so navedeni spodaj.
-</it>
+</b>
 </p>
 <details>
 <summary>Poizvedba stanja sistema</summary>
