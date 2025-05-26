@@ -97,7 +97,7 @@ def test_replace_numbers():
     assert matcher.replace_numbers_with_digits("nastavi temperaturo na dvajset stopinj") == "nastavi temperaturo na 20.0 stopinj"
     assert matcher.replace_numbers_with_digits("nastavi na pet in dvajset stopinj") == "nastavi na 5.0 in 20.0 stopinj"
     assert matcher.replace_numbers_with_digits("ena dva tri") == "1.0 2.0 3.0"
-    assert matcher.replace_numbers_with_digits("dve celi pet") == "2.5"
+    assert matcher.replace_numbers_with_digits("dve celih pet") == "2.5"
 
 # Test includes_temperature
 def test_includes_temperature():
@@ -151,7 +151,7 @@ def test_match_command_botched():
     ]
     assert param == 45.0
 
-    action, param = matcher.match_command("nastavi temperaturo prostora dva na endvajst celh pet stopinj", commands)
+    action, param = matcher.match_command("nastavi temperaturo prostora dva na endvajst celih pet stopinj", commands)
     assert action in [
         "nastavi temperaturo prostora dva na <temperature> stopinj",
         "nastavi želeno temperaturo drugega prvega kroga na <temperature> stopinj"
