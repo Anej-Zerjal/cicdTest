@@ -20,8 +20,8 @@ Ta dodatek omogoča glasovno upravljanje vaše Kronoterm črpalke preko Home Ass
 * **100% lokalno**: Vse operacije se izvajajo lokalno, brez potrebe po zunanjih strežnikih ali internetni povezavi.
 * **Povratna informacija**: Integracija omogoča povratno informacijo, kar pomeni, da lahko sistem odgovori na vaše ukaze in vprašanja.
 
-<details>
-    <summary><b>Možni ukazi za posamezne funkcionalnosti (Klikni in poglej)</b></summary>
+
+### Možni ukazi za posamezne funkcionalnosti (Klikni in poglej)
 
     <details>
         <summary>Poizvedba stanja sistema</summary>
@@ -271,7 +271,7 @@ Ta dodatek omogoča glasovno upravljanje vaše Kronoterm črpalke preko Home Ass
         <li>"kakšna je temperatura [prvega/drugega/tretjega/četrtega] ogrevalnega kroga"</li>
     </ul>
     </details>
-</details>
+
 
 
 
