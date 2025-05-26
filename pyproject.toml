@@ -32,5 +32,6 @@ test = [
     "coverage",
     "pymodbus",
     "rapidfuzz",
-    "unidecode"
+    "unidecode",
+    "pyserial"
 ]
