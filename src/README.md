@@ -20,13 +20,256 @@ Ta dodatek omogoča glasovno upravljanje vaše Kronoterm črpalke preko Home Ass
 * **100% lokalno**: Vse operacije se izvajajo lokalno, brez potrebe po zunanjih strežnikih ali internetni povezavi.
 * **Povratna informacija**: Integracija omogoča povratno informacijo, kar pomeni, da lahko sistem odgovori na vaše ukaze in vprašanja.
 
+Možni ukazi za posamezne funkcionalnosti
 <details>
-  <summary>Placeholder</summary>
+  <summary>Poizvedba stanja sistema</summary>
   <ul>
-    <li>kakšna je temperatura ogrevalnega kroga štiri</li>
-    <li>kakšna je temperatura četrtega ogrevalnega kroga</li>
+    <li>"ali je sistem vklopljen"</li>
+    <li>"ali je sistem izklopljen"</li>
+    <li>"kakšno je stanje sistema"</li>
   </ul>
 </details>
+
+<details>
+  <summary>Poizvedba načina delovanja</summary>
+  <ul>
+    <li>"kakšna funkcija se izvaja"</li>
+    <li>"kakšna funkcija delovanja se izvaja"</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Poizvedba stanja rezervnega vira</summary>
+  <ul>
+    <li>"ali je rezervni vir vklopljen"</li>
+    <li>"ali je rezervni vir izklopljen"</li>
+    <li>"kakšen je status rezervnega vira"</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Poizvedba stanja alternativnega vira</summary>
+  <ul>
+    <li>"ali je alternativni vir vklopljen"</li>
+    <li>"ali je alternativni vir izklopljen"</li>
+    <li>"kakšen je status alternativnega vira"</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Poizvedba režima delovanja</summary>
+  <ul>
+    <li>"kakšen je trenuten režim delovanja"</li>
+    <li>"kakšen je režim delovanja"</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Poizvedba programa delovanja</summary>
+  <ul>
+    <li>"kakšen je trenuten program"</li>
+    <li>"kakšen je program delovanja"</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Poizvedba stanja segrevanja sanitarne vode</summary>
+  <ul>
+    <li>"kakšen je status hitrega segrevanja sanitarne vode"</li>
+    <li>"ali je hitro segrevanje sanitarne vode vklopljeno"</li>
+    <li>"ali je hitro segrevanje sanitarne vode izklopljeno"</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Poizvedba statusa načina odtaljevanja</summary>
+  <ul>
+    <li>"kakšen je status odtaljevanja"</li>
+    <li>"ali je odtaljevanje vklopljeno"</li>
+    <li>"ali je odtaljevanje izklopljeno"</li>
+    <li>"ali se odtaljevanje izvaja"</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Vklop toplotne črpalke</summary>
+  <ul>
+    <li>"vklopi sistem"</li>
+    <li>"vklopi toplotno črpalko in ogrevalne kroge"</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Izklop toplotne črpalke</summary>
+  <ul>
+    <li>"izklopi sistem"</li>
+    <li>"izklopi toplotno črpalko in ogrevalne kroge"</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Nastavljanje normalnega režima</summary>
+  <ul>
+    <li>"nastavi normalen režim"</li>
+    <li>"nastavi režim na normalen način"</li>
+    <li>"vklopi normalen režim"</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Nastavljanje ECO režima</summary>
+  <ul>
+    <li>"nastavi eco režim"</li>
+    <li>"nastavi režim na eco način"</li>
+    <li>"vklopi eco režim"</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Nastavljanje COM režima</summary>
+  <ul>
+    <li>"nastavi com režim"</li>
+    <li>"nastavi režim na com način"</li>
+    <li>"vklopi com režim"</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Vklop hitrega segrevanja sanitarne vode</summary>
+  <ul>
+    <li>"vklopi hitro segrevanje sanitarne vode"</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Izklop hitrega segrevanja sanitarne vode</summary>
+  <ul>
+    <li>"izklopi hitro segrevanje sanitarne vode": disable_dhw_quick_heating</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Poizvedba obremenitve toplotne črpalke</summary>
+  <ul>
+    <li>"kakšna je trenutna obremenitev toplotne črpalke"</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Nastavljanje temperature sanitarne vode</summary>
+  <ul>
+    <li>"nastavi želeno temperaturo sanitarne vode na [x] stopinj"</li>
+    <li>"nastavi temperaturo sanitarne vode na [x] stopinj"</li>
+    <li>"segrej sanitarno vodo na [x] stopinj"</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Poizvedba želene temperature sanitarne vode</summary>
+  <ul>
+    <li>"kakšna je trenutna želena temperatura sanitarne vode"</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Izklop segrevanja sanitarne vode</summary>
+  <ul>
+    <li>"izklopi segrevanje sanitarne vode"</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Nastavljanje normalnega režima sanitarne vode</summary>
+  <ul>
+    <li>"nastavi normalen režim sanitarne vode"</li>
+    <li>"nastavi režim sanitarne vode na normalno"</li>
+    <li>"vklopi normalen režim segrevanja sanitarne vode"</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Nastavljanje režima sanitarne vode po runiku</summary>
+  <ul>
+    <li>"nastavi režim sanitarne vode po urniku"</li>
+    <li>"vklopi režim segrevanja sanitarne vode po urniku"</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Poizvedba režima sanitarne vode po runiku</summary>
+  <ul>
+    <li>"kakšen je trenuten način delovanja sanitarne vode po urniku"</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Poizvedba akutalne temperature sanitarne vode</summary>
+  <ul>
+    <li>"kakšna je temperatura sanitarne vode": get_dhw_temperature</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Nastavljanje temperature prostora</summary>
+  <ul>
+    <li>"nastavi temperaturo prostora [ena/dva/tri/štiri] na [x] stopinj"</li>
+    <li>"nastavi želeno temperaturo prostora [prvega/drugega/tretjega/četrtega] kroga na [x] stopinj"</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Poizvedba želene temperature prostora</summary>
+  <ul>
+    <li>"kakšna je trenutna želena temperatura prostora [prvega/drugega/tretjega/četrtega] kroga"</li>
+    <li>"kakšna je trenutna želena temperatura prostora [ena/dva/tri/štiri]"</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Izklop ogrevalnega kroga</summary>
+  <ul>
+    <li>"izklopi [prvi/drugi/tretji/četrti] ogrevalni krog"</li>
+    <li>"izklopi ogrevalni krog [ena/dva/tri/štiri]"</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Nastavitev delovanja ogrevalnega kroga na normalni režim</summary>
+  <ul>
+    <li>"nastavi delovanje [prvega/drugega/tretjega/četrtega] ogrevalnega kroga na normalni režim"</li>
+    <li>"nastavi delovanje ogrevalnega kroga [ena/dva/tri/štiri] na normalni režim"</li>
+    <li>"vklopi normalni režim na ogrevalnem krogu [ena/dva/tri/štiri]"</li>
+    <li>"vklopi normalni režim na [prvem/drugem/tretjem/četrtem] ogrevalnem krogu"</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Nastavitev delovanja ogrevalnega kroga po urniku</summary>
+  <ul>
+    <li>"nastavi delovanje [prvega/drugega/tretjega/četrtega] ogrevalnega kroga na delovanje po urniku"</li>
+    <li>"nastavi delovanje ogrevalnega kroga [ena/dva/tri/štiri] na delovanje po urniku"</li>
+    <li>"vklopi delovanje po urniku na ogrevalnem krogu [ena/dva/tri/štiri]"</li>
+    <li>"vklopi delovanje po urniku na [prvem/drugem/tretjem/četrtem] ogrevalnem krogu"</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Poizvedba stanja ogrevalnega kroga</summary>
+  <ul>
+    <li>"kakšen je status delovanja [prvega/drugega/tretjega/četrtega] ogrevalnega kroga"</li>
+    <li>"kakšen je status delovanja ogrevalnega kroga [ena/dva/tri/štiri]"</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Poizvedba aktualne temperature ogrevalnega kroga</summary>
+  <ul>
+    <li>"kakšna je temperatura ogrevalnega kroga [ena/dva/tri/štiri]"</li>
+    <li>"kakšna je temperatura [prvega/drugega/tretjega/četrtega] ogrevalnega kroga"</li>
+  </ul>
+</details>
+
+
 
 ![Primer pogovora](/assets/image4.png "Primer pogovora")
 
